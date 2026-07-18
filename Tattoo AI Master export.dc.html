@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tattoo AI Master</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+    @keyframes glow   { 0%,100%{opacity:.35} 50%{opacity:.75} }
+    .nav-scrolled { background: rgba(8,8,8,.97) !important; backdrop-filter: blur(20px); padding: 10px 0 !important; border-bottom: 1px solid rgba(57,255,20,.1) !important; }
+    .btn-g { transition: transform .22s, box-shadow .22s; }
+    .btn-g:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 16px 44px rgba(57,255,20,.55) !important; }
+    .card-h:hover { transform: translateY(-5px); border-color: #39FF14 !important; }
+    .lnk:hover { color: #39FF14 !important; }
+    @media (max-width: 960px) {
+      .hero-layout { flex-direction: column !important; }
+      .hero-logo-wrap { display: none !important; }
+      .stats-about { flex-direction: column !important; }
+      .about-vis { display: none !important; }
+      .mods-inner { flex-direction: column !important; }
+      .mods-grid { grid-template-columns: 1fr 1fr !important; }
+      .depo-row { flex-direction: column !important; align-items: center !important; }
+      .plans-row { flex-direction: column !important; align-items: center !important; }
+      .bonus-grid { grid-template-columns: 1fr !important; }
+      .whom-row { flex-direction: column !important; }
+      .footer-inner { flex-direction: column !important; text-align: center !important; align-items: center !important; }
+      .nav-cta { display: none !important; }
+    }
+    @media (max-width: 600px) {
+      .mods-grid { grid-template-columns: 1fr !important; }
+      .hero-cta-box { display: none !important; }
+    }
+  </style>
+</helmet>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav style="position:fixed;top:0;left:0;width:100%;z-index:200;padding:16px 0;transition:all .3s" data-nav>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center">
+    <a href="#"><img src="uploads/logo%20tols.png" alt="Tattoo AI Master" style="height:42px;width:auto;filter:drop-shadow(0 0 10px rgba(57,255,20,.4))"></a>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button onClick="{{ toggleLang }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px">{{ langLabel }}</button>
+      <a href="#pricing" class="btn-g nav-cta" style="background:#39FF14;color:#000;padding:11px 28px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(57,255,20,.35)">{{ navCta }}</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO — BLACK ═══ -->
+<section style="position:relative;background:#080808;min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;padding-top:80px">
+  <!-- ambient glow -->
+  <div style="position:absolute;top:0;left:0;width:70vw;height:70vw;background:radial-gradient(circle,rgba(57,255,20,.07) 0%,transparent 65%);pointer-events:none;animation:glow 6s ease infinite"></div>
+
+  <!-- top-right info box -->
+  <div class="hero-cta-box" style="position:absolute;top:100px;right:32px;width:260px;z-index:10">
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(57,255,20,.25);border-radius:16px;padding:22px 24px">
+      <div style="font-size:11px;font-weight:900;color:#39FF14;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">{{ badge }}</div>
+      <p style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.55;margin-bottom:18px">{{ heroDesc }}</p>
+      <a href="#pricing" class="btn-g" style="display:inline-flex;align-items:center;gap:8px;background:#39FF14;color:#000;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(57,255,20,.35)">
+        {{ heroCta }} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Logo floating image -->
+  <div class="hero-logo-wrap" style="position:absolute;right:-40px;top:50%;transform:translateY(-48%);width:52vw;max-width:700px;z-index:5;pointer-events:none">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 40%,rgba(57,255,20,.18) 0%,transparent 65%);animation:glow 5s ease infinite"></div>
+    <img src="uploads/logo%20tols.png" alt="" style="width:100%;height:auto;filter:drop-shadow(0 0 80px rgba(57,255,20,.45));animation:float 8s ease-in-out infinite;position:relative;z-index:1">
+  </div>
+
+  <!-- Giant headline -->
+  <div style="padding:0 32px 0;padding-right:calc(260px + 64px);position:relative;z-index:6;width:100%">
+    <h1 style="font-family:'Outfit',sans-serif;font-weight:900;line-height:.92;letter-spacing:-4px;color:#fff;white-space:nowrap;overflow:hidden">
+      <span style="display:block;font-size:clamp(80px,16vw,220px)">TATTOO</span>
+      <span style="display:block;font-size:clamp(52px,10.5vw,148px);background:linear-gradient(135deg,#39FF14 0%,#00e055 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">AI MASTER.</span>
+    </h1>
+  </div>
+
+  <!-- Bottom bar: stats + CTA -->
+  <div style="border-top:1px solid rgba(255,255,255,.07);margin-top:40px;display:flex;align-items:stretch;flex-wrap:wrap;position:relative;z-index:6">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+      <div style="flex:1;min-width:150px;padding:24px 28px;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:#39FF14;line-height:1;margin-bottom:4px">{{ s.n }}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;font-weight:600">{{ s.l }}</div>
+      </div>
+    </sc-for>
+    <div style="flex:none;display:flex;align-items:center;padding:24px 32px">
+      <a href="#pricing" class="btn-g" style="background:#39FF14;color:#000;padding:14px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 28px rgba(57,255,20,.4);white-space:nowrap">{{ heroCta }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TICKER — GREEN ═══ -->
+<div style="background:#39FF14;padding:12px 0;overflow:hidden;border-top:2px solid rgba(0,0,0,.1);border-bottom:2px solid rgba(0,0,0,.1)">
+  <div style="display:flex;animation:ticker 22s linear infinite;white-space:nowrap;width:max-content">
+    <span style="font-size:11px;font-weight:900;color:rgba(0,0,0,.6);letter-spacing:3px;text-transform:uppercase;padding:0 20px">BLACKWORK • REALISMO • AQUARELA • GEOMÉTRICO • NEOTRADICIONAL • JAPONÊS • FINELINE • DOTWORK • BIOMECÂNICO • OLD SCHOOL • TRASH POLKA • MAORI •&nbsp;&nbsp;&nbsp;BLACKWORK • REALISMO • AQUARELA • GEOMÉTRICO • NEOTRADICIONAL • JAPONÊS • FINELINE • DOTWORK • BIOMECÂNICO • OLD SCHOOL • TRASH POLKA • MAORI •</span>
+  </div>
+</div>
+
+<!-- ═══ NOSSOS CURSOS — BLACK ═══ -->
+<section id="cursos" style="background:#080808;padding:80px 0 60px">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:52px">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(52px,9vw,120px);font-weight:900;letter-spacing:-3.5px;line-height:.9;color:#fff">{{ coursesTitle }}</h2>
+      <p style="margin-top:14px;font-size:16px;color:rgba(255,255,255,.35)">{{ coursesSub }}</p>
+    </div>
+
+    <!-- ── MidJourney ── -->
+    <div style="margin-bottom:3px;overflow:hidden;border-radius:20px 20px 0 0">
+      <div onClick="{{ toggleMJ }}" style="display:flex;align-items:stretch;background:#111;cursor:pointer;min-height:240px">
+        <div style="flex:none;width:260px;overflow:hidden;position:relative">
+          <img src="uploads/ChatGPT%20Image%2016%20de%20jul.png" alt="MidJourney" style="width:100%;height:100%;object-fit:cover;object-position:center top">
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 40%,#111 100%)"></div>
+        </div>
+        <div style="flex:1;padding:36px 48px;display:flex;align-items:center;gap:40px">
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;color:#1a6eff">MIDJOURNEY</div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:clamp(24px,3.5vw,46px);font-weight:900;letter-spacing:-1.5px;color:#fff;margin-bottom:8px;line-height:1">{{ mjName }}</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.38);margin-bottom:18px">{{ mjSub }}</p>
+            <div style="display:flex;gap:18px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#1a6eff;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ mjF1 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#1a6eff;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ mjF2 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#1a6eff;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ mjF3 }}</span></div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <a href="#" onClick="{{ stopMJ }}" style="display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#000;padding:15px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 1px rgba(26,110,255,.35),0 8px 32px rgba(26,110,255,.55),0 0 60px rgba(26,110,255,.2);text-decoration:none;letter-spacing:.4px;white-space:nowrap">{{ buyLabel }}</a>
+            <span style="font-size:11px;color:rgba(255,255,255,.2)">{{ seeDetails }}</span>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ mjExpanded }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#0c0c0c;border-top:2px solid #1a6eff;padding:52px 48px">
+          <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+            <div style="flex:1;min-width:240px">
+              <h4 style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-1px">{{ mjFullTitle }}</h4>
+              <p style="font-size:14px;color:rgba(255,255,255,.35);margin-bottom:28px">{{ mjFullSub }}</p>
+              <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:28px">
+                <sc-for list="{{ mjFeatures }}" as="f" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="flex:none;width:20px;height:20px;border-radius:50%;background:rgba(26,110,255,.12);display:flex;align-items:center;justify-content:center">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#1a6eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:15px;color:rgba(255,255,255,.65)">{{ f }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:rgba(26,110,255,.06);border:1px solid rgba(26,110,255,.18);border-radius:10px;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:8px"><span>ℹ️</span> {{ mjReq }}</div>
+            </div>
+            <div style="flex:1;min-width:220px;display:flex;flex-direction:column;align-items:flex-start">
+              <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:#1a6eff;text-transform:uppercase;margin-bottom:18px">{{ bonusLabel }}</div>
+              <div style="display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:36px">
+                <sc-for list="{{ mjBonuses }}" as="b" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px">
+                    <span style="font-size:24px">{{ b.icon }}</span>
+                    <span style="font-size:14px;color:rgba(255,255,255,.6)">{{ b.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <a href="#" style="display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#000;padding:18px 52px;border-radius:100px;font-size:18px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 2px rgba(26,110,255,.45),0 8px 40px rgba(26,110,255,.7),0 0 80px rgba(26,110,255,.35),0 0 120px rgba(26,110,255,.15);text-decoration:none;letter-spacing:.5px">{{ buyLabel }}</a>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- ── GROK ── -->
+    <div style="margin-bottom:3px;overflow:hidden">
+      <div onClick="{{ toggleGrok }}" style="display:flex;align-items:stretch;background:#111;cursor:pointer;min-height:240px">
+        <div style="flex:none;width:260px;overflow:hidden;position:relative">
+          <img src="uploads/grok.png" alt="GROK" style="width:100%;height:100%;object-fit:cover;object-position:center top">
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 40%,#111 100%)"></div>
+        </div>
+        <div style="flex:1;padding:36px 48px;display:flex;align-items:center;gap:40px">
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;color:#e60023">GROK</div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:clamp(24px,3.5vw,46px);font-weight:900;letter-spacing:-1.5px;color:#fff;margin-bottom:8px;line-height:1">{{ grokName }}</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.38);margin-bottom:18px">{{ grokSub }}</p>
+            <div style="display:flex;gap:18px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#e60023;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ grokF1 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#e60023;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ grokF2 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#e60023;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ grokF3 }}</span></div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <a href="#" onClick="{{ stopGrok }}" style="display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#000;padding:15px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 1px rgba(230,0,35,.35),0 8px 32px rgba(230,0,35,.55),0 0 60px rgba(230,0,35,.2);text-decoration:none;letter-spacing:.4px;white-space:nowrap">{{ buyLabel }}</a>
+            <span style="font-size:11px;color:rgba(255,255,255,.2)">{{ seeDetails }}</span>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ grokExpanded }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#0c0c0c;border-top:2px solid #e60023;padding:52px 48px">
+          <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+            <div style="flex:1;min-width:240px">
+              <h4 style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-1px">{{ grokFullTitle }}</h4>
+              <p style="font-size:14px;color:rgba(255,255,255,.35);margin-bottom:28px">{{ grokFullSub }}</p>
+              <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:28px">
+                <sc-for list="{{ grokFeatures }}" as="f" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="flex:none;width:20px;height:20px;border-radius:50%;background:rgba(230,0,35,.12);display:flex;align-items:center;justify-content:center">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#e60023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:15px;color:rgba(255,255,255,.65)">{{ f }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:rgba(230,0,35,.06);border:1px solid rgba(230,0,35,.18);border-radius:10px;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:8px"><span>ℹ️</span> {{ grokReq }}</div>
+            </div>
+            <div style="flex:1;min-width:220px;display:flex;flex-direction:column;align-items:flex-start">
+              <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:#e60023;text-transform:uppercase;margin-bottom:18px">{{ bonusLabel }}</div>
+              <div style="display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:36px">
+                <sc-for list="{{ grokBonuses }}" as="b" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px">
+                    <span style="font-size:24px">{{ b.icon }}</span>
+                    <span style="font-size:14px;color:rgba(255,255,255,.6)">{{ b.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <a href="#" style="display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#000;padding:18px 52px;border-radius:100px;font-size:18px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 2px rgba(230,0,35,.45),0 8px 40px rgba(230,0,35,.7),0 0 80px rgba(230,0,35,.35),0 0 120px rgba(230,0,35,.15);text-decoration:none;letter-spacing:.5px">{{ buyLabel }}</a>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- ── FX ── -->
+    <div style="overflow:hidden;border-radius:0 0 20px 20px">
+      <div onClick="{{ toggleFX }}" style="display:flex;align-items:stretch;background:#111;cursor:pointer;min-height:240px">
+        <div style="flex:none;width:260px;overflow:hidden;position:relative">
+          <img src="uploads/fx.png" alt="FX" style="width:100%;height:100%;object-fit:cover;object-position:center top">
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 40%,#111 100%)"></div>
+        </div>
+        <div style="flex:1;padding:36px 48px;display:flex;align-items:center;gap:40px">
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;color:#39FF14">FX</div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:clamp(24px,3.5vw,46px);font-weight:900;letter-spacing:-1.5px;color:#fff;margin-bottom:8px;line-height:1">{{ fxName }}</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.38);margin-bottom:18px">{{ fxSub }}</p>
+            <div style="display:flex;gap:18px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#39FF14;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ fxF1 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#39FF14;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ fxF2 }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:#39FF14;flex:none"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">{{ fxF3 }}</span></div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:10px">
+            <a href="#" onClick="{{ stopFX }}" style="display:inline-flex;align-items:center;justify-content:center;background:#39FF14;color:#000;padding:15px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 1px rgba(57,255,20,.4),0 8px 32px rgba(57,255,20,.6),0 0 60px rgba(57,255,20,.25);text-decoration:none;letter-spacing:.4px;white-space:nowrap">{{ buyLabel }}</a>
+            <span style="font-size:11px;color:rgba(255,255,255,.2)">{{ seeDetails }}</span>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ fxExpanded }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#0c0c0c;border-top:2px solid #39FF14;padding:52px 48px">
+          <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+            <div style="flex:1;min-width:240px">
+              <h4 style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-1px">{{ fxFullTitle }}</h4>
+              <p style="font-size:14px;color:rgba(255,255,255,.35);margin-bottom:28px">{{ fxFullSub }}</p>
+              <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:28px">
+                <sc-for list="{{ fxFeatures }}" as="f" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="flex:none;width:20px;height:20px;border-radius:50%;background:rgba(57,255,20,.1);display:flex;align-items:center;justify-content:center">
+                      <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:15px;color:rgba(255,255,255,.65)">{{ f }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="background:rgba(57,255,20,.05);border:1px solid rgba(57,255,20,.15);border-radius:10px;padding:14px 18px;font-size:13px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:8px"><span>✅</span> {{ fxNote }}</div>
+            </div>
+            <div style="flex:1;min-width:220px;display:flex;flex-direction:column;align-items:flex-start">
+              <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:#39FF14;text-transform:uppercase;margin-bottom:18px">{{ bonusLabel }}</div>
+              <div style="display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:36px">
+                <sc-for list="{{ fxBonuses }}" as="b" hint-placeholder-count="1">
+                  <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 18px">
+                    <span style="font-size:24px">{{ b.icon }}</span>
+                    <span style="font-size:14px;color:rgba(255,255,255,.6)">{{ b.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <a href="#" style="display:inline-flex;align-items:center;justify-content:center;background:#39FF14;color:#000;padding:18px 52px;border-radius:100px;font-size:18px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 0 0 2px rgba(57,255,20,.5),0 8px 40px rgba(57,255,20,.7),0 0 80px rgba(57,255,20,.4),0 0 120px rgba(57,255,20,.2);text-decoration:none;letter-spacing:.5px">{{ buyLabel }}</a>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ STATS + ABOUT — WHITE ═══ -->
+<section style="background:#f2f2f2;padding:80px 0;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div class="stats-about" style="display:flex;gap:48px;align-items:center">
+
+      <!-- Stat badge column -->
+      <div style="flex:none;display:flex;flex-direction:column;gap:14px;min-width:220px">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="background:#0a0a0a;border-radius:12px;padding:18px 24px;display:flex;align-items:center;gap:16px">
+            <span style="font-family:'Outfit',sans-serif;font-size:30px;font-weight:900;color:#39FF14;min-width:80px;line-height:1">{{ s.n }}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.8px;font-weight:600;line-height:1.3">{{ s.l }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- Logo visual -->
+      <div class="about-vis" style="flex:none;position:relative">
+        <div style="width:220px;height:220px;background:radial-gradient(circle,rgba(57,255,20,.15) 0%,transparent 70%);display:flex;align-items:center;justify-content:center;animation:glow 4s ease infinite">
+          <img src="uploads/logo%20tols.png" alt="" style="width:200px;height:200px;object-fit:contain;filter:drop-shadow(0 4px 20px rgba(0,0,0,.25))">
+        </div>
+      </div>
+
+      <!-- Giant "SOBRE O CURSO" text -->
+      <div style="flex:1;overflow:hidden">
+        <div style="font-family:'Outfit',sans-serif;font-weight:900;letter-spacing:-3px;line-height:.9;color:#0a0a0a;white-space:nowrap">
+          <div style="font-size:clamp(56px,8vw,110px)">{{ aboutLine1 }}</div>
+          <div style="font-size:clamp(44px,6.5vw,88px)">{{ aboutLine2 }}</div>
+        </div>
+        <div style="width:56px;height:4px;background:#39FF14;margin:24px 0 20px;border-radius:2px"></div>
+        <p style="font-size:16px;color:rgba(0,0,0,.6);line-height:1.7;max-width:500px">{{ aboutDesc }}</p>
+        <a href="#pricing" style="display:inline-flex;align-items:center;gap:8px;margin-top:24px;background:#0a0a0a;color:#39FF14;padding:13px 28px;border-radius:100px;font-size:14px;font-weight:800;font-family:'Inter',sans-serif;letter-spacing:.3px">{{ aboutCta }} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MODULES — WHITE ═══ -->
+<section id="modules" style="background:#ffffff;padding:80px 0 100px;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div class="mods-inner" style="display:flex;gap:64px;align-items:flex-start">
+
+      <!-- Left: headline + CTA -->
+      <div style="flex:none;min-width:260px;max-width:320px;position:sticky;top:120px">
+        <div style="font-family:'Outfit',sans-serif;font-weight:900;letter-spacing:-2.5px;line-height:.92;color:#0a0a0a">
+          <div style="font-size:clamp(48px,7vw,90px)">{{ modLine1 }}</div>
+          <div style="font-size:clamp(36px,5vw,68px);color:#39FF14">{{ modLine2 }}</div>
+          <div style="font-size:clamp(48px,7vw,90px)">{{ modLine3 }}</div>
+        </div>
+        <div style="width:44px;height:4px;background:#0a0a0a;margin:24px 0 20px;border-radius:2px"></div>
+        <p style="font-size:14px;color:rgba(0,0,0,.55);line-height:1.65;margin-bottom:24px">{{ modulesSub }}</p>
+        <a href="#pricing" style="display:inline-flex;align-items:center;gap:8px;background:#0a0a0a;color:#39FF14;padding:12px 24px;border-radius:100px;font-size:13px;font-weight:800;font-family:'Inter',sans-serif">{{ heroCta }} <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+
+      <!-- Right: module grid -->
+      <div style="flex:1">
+        <div class="mods-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <sc-for list="{{ modules }}" as="mod" hint-placeholder-count="6">
+            <div class="card-h" style="background:#0a0a0a;border:1px solid rgba(57,255,20,.12);border-radius:16px;padding:28px 24px;transition:transform .25s,border-color .25s;cursor:default;position:relative;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#39FF14,#00e055)"></div>
+              <div style="font-family:'Outfit',sans-serif;font-size:40px;font-weight:900;color:rgba(57,255,20,.15);line-height:1;margin-bottom:12px;letter-spacing:-2px">{{ mod.n }}</div>
+              <div style="font-size:26px;margin-bottom:12px">{{ mod.icon }}</div>
+              <h3 style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;margin-bottom:8px;color:#fff;letter-spacing:-.2px">{{ mod.title }}</h3>
+              <p style="font-size:13px;color:rgba(255,255,255,.42);line-height:1.6">{{ mod.desc }}</p>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOR WHOM — BLACK ═══ -->
+<section style="background:#080808;padding:100px 0;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:64px">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(52px,9vw,120px);font-weight:900;letter-spacing:-3.5px;line-height:.92">
+        <span style="color:#fff">{{ forLine1 }} </span><span style="color:#39FF14">{{ forLine2 }}</span>
+      </h2>
+    </div>
+    <div class="whom-row" style="display:flex;gap:20px">
+      <sc-for list="{{ forWhom }}" as="fw" hint-placeholder-count="3">
+        <div class="card-h" style="flex:1;background:#0d0d0d;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:36px 28px;transition:transform .25s,border-color .25s;cursor:default">
+          <div style="width:54px;height:54px;background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">{{ fw.icon }}</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-bottom:10px;color:#fff;letter-spacing:-.3px">{{ fw.title }}</h3>
+          <p style="font-size:14px;color:rgba(255,255,255,.45);line-height:1.65">{{ fw.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS — WHITE ═══ -->
+<section id="depoimentos" style="background:#f2f2f2;padding:100px 0">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:56px">
+      <div style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,108px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#0a0a0a">{{ depoTitle }}</div>
+      <p style="margin-top:20px;font-size:16px;color:rgba(0,0,0,.5)">{{ depoSub }}</p>
+    </div>
+    <div class="depo-row" style="display:flex;gap:28px;justify-content:flex-start;flex-wrap:wrap">
+      <div><img src="uploads/depo1-min.png" alt="Leandro Tattoo" style="width:min(270px,28vw);max-width:100%;height:auto;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.2)"></div>
+      <div><img src="uploads/DEPO2-min.png" alt="Danillo Tattoo" style="width:min(270px,28vw);max-width:100%;height:auto;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.2)"></div>
+      <div><img src="uploads/DEPO6-min.png" alt="Maithomas Tattoo" style="width:min(270px,28vw);max-width:100%;height:auto;border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.2)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMMUNITY — GREEN BAND ═══ -->
+<section style="background:#39FF14;padding:90px 0;overflow:hidden;position:relative">
+  <div style="position:absolute;right:-5%;top:-30%;width:50vw;height:50vw;background:rgba(0,0,0,.07);border-radius:50%;pointer-events:none"></div>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;gap:64px;align-items:center;flex-wrap:wrap;position:relative">
+    <div style="flex:1;min-width:280px">
+      <div style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,100px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#000">
+        {{ commLine1 }}<br><span style="color:rgba(0,0,0,.65)">{{ commLine2 }}</span>
+      </div>
+    </div>
+    <div style="flex:none;max-width:440px">
+      <p style="font-size:17px;color:rgba(0,0,0,.7);line-height:1.7;margin-bottom:28px;font-weight:500">{{ commDesc }}</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <a href="#pricing" style="display:inline-flex;align-items:center;gap:8px;background:#000;color:#39FF14;padding:15px 32px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif">{{ heroCta }} <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="#depoimentos" style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,.1);border:2px solid rgba(0,0,0,.25);color:#000;padding:15px 28px;border-radius:100px;font-size:15px;font-weight:800;font-family:'Inter',sans-serif">{{ commSeeResults }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BONUSES — WHITE ═══ -->
+<section id="bonus" style="background:#ffffff;padding:100px 0">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:64px;display:flex;align-items:flex-end;gap:32px;flex-wrap:wrap">
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:800;color:#39FF14;background:#0a0a0a;display:inline-block;padding:5px 14px;border-radius:100px;letter-spacing:2px;margin-bottom:16px;text-transform:uppercase">{{ bonusLabel }}</div>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(40px,6.5vw,86px);font-weight:900;letter-spacing:-2.5px;line-height:.92;color:#0a0a0a">{{ bonusTitle }}</h2>
+      </div>
+      <p style="flex:none;max-width:340px;font-size:15px;color:rgba(0,0,0,.55);line-height:1.7">{{ bonusSub }}</p>
+    </div>
+    <div class="bonus-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <sc-for list="{{ bonuses }}" as="bon" hint-placeholder-count="3">
+        <div class="card-h" style="background:#0a0a0a;border:1px solid rgba(57,255,20,.14);border-radius:18px;padding:34px 28px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s;cursor:default">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#39FF14"></div>
+          <div style="display:inline-block;background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.25);border-radius:6px;padding:3px 10px;font-size:10px;font-weight:900;color:#39FF14;letter-spacing:1.5px;margin-bottom:18px;text-transform:uppercase">{{ bon.tag }}</div>
+          <div style="font-size:34px;margin-bottom:14px">{{ bon.icon }}</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;margin-bottom:10px;color:#fff;letter-spacing:-.2px">{{ bon.title }}</h3>
+          <p style="font-size:13px;color:rgba(255,255,255,.45);line-height:1.65;margin-bottom:18px">{{ bon.desc }}</p>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;color:rgba(255,255,255,.25);text-decoration:line-through">{{ bon.val }}</span>
+            <span style="font-size:11px;font-weight:800;color:#39FF14;background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.2);padding:2px 9px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase">{{ bonusFreeLabel }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING — BLACK ═══ -->
+<section id="pricing" style="background:#080808;padding:100px 0">
+  <div style="max-width:1000px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:72px">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,100px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#fff;margin-bottom:16px">{{ pricingTitle }}</h2>
+      <p style="font-size:17px;color:rgba(255,255,255,.45)">{{ pricingSub }}</p>
+    </div>
+    <div class="plans-row" style="display:flex;gap:20px;justify-content:center;align-items:start;flex-wrap:wrap">
+
+      <!-- Plan 1 -->
+      <div style="flex:1;min-width:280px;max-width:440px;background:#0d0d0d;border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:44px">
+        <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,.3);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px">{{ plan1tag }}</div>
+        <h3 style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;margin-bottom:22px;letter-spacing:-.5px">{{ plan1name }}</h3>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:28px">
+          <span style="font-family:'Outfit',sans-serif;font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1">{{ plan1price }}</span>
+          <span style="font-size:13px;color:rgba(255,255,255,.35)">{{ plan1note }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:32px">
+          <sc-for list="{{ plan1features }}" as="f" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:11px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="rgba(57,255,20,.12)"/><path d="M7.5 12l3.5 3.5 5.5-6" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size:14px;color:rgba(255,255,255,.6)">{{ f }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <a href="#" style="display:block;text-align:center;border:2px solid rgba(57,255,20,.3);color:#39FF14;padding:14px;border-radius:100px;font-size:15px;font-weight:800;font-family:'Inter',sans-serif;transition:background .2s">{{ plan1cta }}</a>
+      </div>
+
+      <!-- Plan 2 (Gold) -->
+      <div style="flex:1;min-width:280px;max-width:440px;background:#0d0d0d;border:2px solid rgba(57,255,20,.5);border-radius:22px;padding:44px;position:relative;box-shadow:0 0 80px rgba(57,255,20,.1)">
+        <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:#39FF14;color:#000;font-size:10px;font-weight:900;letter-spacing:2px;padding:5px 18px;border-radius:0 0 12px 12px;white-space:nowrap;text-transform:uppercase">{{ plan2popular }}</div>
+        <div style="font-size:10px;font-weight:900;color:#39FF14;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px">{{ plan2tag }}</div>
+        <h3 style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;margin-bottom:22px;letter-spacing:-.5px">{{ plan2name }}</h3>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:28px">
+          <span style="font-family:'Outfit',sans-serif;font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1;background:linear-gradient(135deg,#39FF14,#00e055);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">{{ plan2price }}</span>
+          <span style="font-size:13px;color:rgba(255,255,255,.35)">{{ plan2note }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:32px">
+          <sc-for list="{{ plan2features }}" as="f" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:11px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="rgba(57,255,20,.2)"/><path d="M7.5 12l3.5 3.5 5.5-6" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size:14px;color:rgba(255,255,255,.8)">{{ f }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <a href="#" class="btn-g" style="display:block;text-align:center;background:#39FF14;color:#000;padding:16px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 28px rgba(57,255,20,.4)">{{ plan2cta }}</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GUARANTEE — BLACK ═══ -->
+<section style="background:#080808;border-top:1px solid rgba(57,255,20,.1);padding:100px 0;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:60px;flex-wrap:wrap">
+    <div style="flex:none">
+      <div style="font-size:100px;line-height:1">🛡️</div>
+    </div>
+    <div style="flex:1;min-width:280px">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:900;letter-spacing:-2.5px;line-height:.95;color:#fff;margin-bottom:18px">{{ guarTitle }}</h2>
+      <p style="font-size:17px;color:rgba(255,255,255,.5);line-height:1.7;max-width:580px">{{ guarText }}</p>
+    </div>
+    <div style="flex:none">
+      <a href="#pricing" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:#39FF14;color:#000;padding:16px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 28px rgba(57,255,20,.4)">{{ heroCta }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INSTRUCTOR — WHITE ═══ -->
+<section style="background:#f2f2f2;padding:90px 0">
+  <div style="max-width:1000px;margin:0 auto;padding:0 32px;text-align:center">
+    <div style="width:96px;height:96px;background:linear-gradient(135deg,#39FF14,#00cc44);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:44px">👨‍🎨</div>
+    <div style="display:inline-block;background:#0a0a0a;border-radius:100px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:10px;font-weight:800;color:#39FF14;letter-spacing:2px;text-transform:uppercase">{{ instructorLabel }}</span>
+    </div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;color:#0a0a0a">{{ instructorName }}</h2>
+    <p style="font-size:17px;color:rgba(0,0,0,.55);line-height:1.75;max-width:660px;margin:0 auto">{{ instructorBio }}</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER — FULL GREEN ═══ -->
+<footer style="background:#39FF14;padding:72px 0 40px;overflow:hidden;position:relative">
+  <div style="position:absolute;top:-10%;right:-5%;width:40vw;height:40vw;background:rgba(0,0,0,.05);border-radius:50%;pointer-events:none"></div>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;position:relative">
+    <!-- Giant footer logo text -->
+    <div style="overflow:hidden;margin-bottom:48px">
+      <div style="font-family:'Outfit',sans-serif;font-size:clamp(60px,12vw,160px);font-weight:900;letter-spacing:-5px;line-height:.85;color:rgba(0,0,0,.15);white-space:nowrap;user-select:none">TATTOO AI MASTER</div>
+    </div>
+    <div class="footer-inner" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;border-top:1px solid rgba(0,0,0,.15);padding-top:28px">
+      <img src="uploads/logo%20tols.png" alt="Tattoo AI Master" style="height:44px;width:auto;object-fit:contain;filter:brightness(0)">
+      <p style="font-size:13px;color:rgba(0,0,0,.5);font-weight:500">{{ footerRights }}</p>
+      <div style="display:flex;gap:24px">
+        <sc-for list="{{ footerLinks }}" as="fl" hint-placeholder-count="3">
+          <a href="#" class="lnk" style="font-size:13px;color:rgba(0,0,0,.55);font-weight:600;transition:color .2s">{{ fl }}</a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'pt', expandedId: null };
+
+  componentDidMount() {
+    const nav = document.querySelector('[data-nav]');
+    if (!nav) return;
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    }, { passive: true });
+  }
+
+  t(pt, en) { return this.state.lang === 'pt' ? pt : en; }
+
+  renderVals() {
+    const t = (pt, en) => this.t(pt, en);
+    const { lang, expandedId } = this.state;
+
+    return {
+      lang,
+      langLabel: lang === 'pt' ? 'EN' : 'PT',
+      toggleLang: () => this.setState(s => ({ lang: s.lang === 'pt' ? 'en' : 'pt' })),
+
+      navCta:     t('Começar Agora', 'Get Started'),
+      badge:      t('O 1º Curso de IA para Tatuadores', 'The 1st AI Course for Tattoo Artists'),
+      heroDesc:   t('Aprenda a usar MidJourney, ChatGPT e IAs gratuitas para criar artes profissionais — sem saber desenhar.', 'Learn to use MidJourney, ChatGPT and free AIs to create professional art — no drawing skills needed.'),
+      heroCta:    t('Quero Acessar o Curso', 'Access the Course'),
+      heroSubNote: t('✓ Acesso imediato  ✓ Garantia de 7 dias', '✓ Immediate access  ✓ 7-day guarantee'),
+
+      stats: [
+        { n: '2.000+', l: t('Alunos', 'Students') },
+        { n: '50K+',   l: t('Artes Geradas', 'Arts Generated') },
+        { n: '4.9★',   l: t('Avaliação', 'Rating') },
+        { n: '100%',   l: t('IA Gratuita', 'Free AI') },
+      ],
+
+      aboutLine1: t('SOBRE', 'ABOUT'),
+      aboutLine2: t('O CURSO', 'THE COURSE'),
+      aboutDesc:  t('O Tattoo AI Master foi o primeiro curso criado para tatuadores e artistas que querem dominar a Inteligência Artificial para criar artes incríveis e acelerar o processo criativo. Usa IAs 100% gratuitas.', 'Tattoo AI Master was the first course created for tattoo artists who want to master Artificial Intelligence to create incredible art and accelerate their creative process. Uses 100% free AIs.'),
+      aboutCta:   t('Quero o Curso', 'Get the Course'),
+
+      modLine1: t('EXPLORE', 'EXPLORE'),
+      modLine2: t('OS', 'THE'),
+      modLine3: t('MÓDULOS', 'MODULES'),
+      modulesSub: t('Do básico ao avançado — tudo para dominar IA no universo tattoo.', 'From basics to advanced — everything to master AI in the tattoo world.'),
+      modules: [
+        { n: '01', icon: '🤖', title: t('Fundamentos da IA', 'AI Fundamentals'),       desc: t('Configure suas ferramentas gratuitamente e entenda como as IAs de imagem funcionam.', 'Set up your tools for free and understand how image AIs really work.') },
+        { n: '02', icon: '🎨', title: t('Engenharia de Prompts', 'Prompt Engineering'), desc: t('Técnicas avançadas de prompt para realismo, blackwork, neotradicional e muito mais.', 'Advanced prompt techniques for realism, blackwork, neotraditional and much more.') },
+        { n: '03', icon: '⚡', title: t('MidJourney Avançado', 'Advanced MidJourney'), desc: t('Domine parâmetros, seeds, remix e upscale para gerar designs prontos para clientes.', 'Master parameters, seeds, remix and upscale to generate client-ready designs.') },
+        { n: '04', icon: '💬', title: t('ChatGPT para Tatuadores', 'ChatGPT for Tattoo Artists'), desc: t('Crie prompts únicos, adapte lettering e recrie tatuagens com fidelidade visual total.', 'Create unique prompts, adapt lettering and recreate tattoos with full visual fidelity.') },
+        { n: '05', icon: '📚', title: t('Banco de Prompts', 'Prompt Library'),           desc: t('Centenas de prompts testados por estilo para resultados profissionais instantâneos.', 'Hundreds of tested prompts by style for instant professional results.') },
+        { n: '06', icon: '🚀', title: t('Mercado & Portfólio', 'Market & Portfolio'),    desc: t('Use suas artes de IA para atrair mais clientes e se destacar no mercado.', 'Use your AI art to attract more clients and stand out in the market.') },
+      ],
+
+      forLine1: t('PARA QUEM', 'WHO IS'),
+      forLine2: t('É ESTE CURSO?', 'THIS FOR?'),
+      forWhom: [
+        { icon: '✏️', title: t('Tatuadores Iniciantes', 'Beginner Artists'),    desc: t('Crie portfólio profissional rapidamente sem precisar saber desenhar do zero.', 'Build a professional portfolio fast without knowing how to draw from scratch.') },
+        { icon: '🏆', title: t('Tatuadores Experientes', 'Experienced Artists'), desc: t('Acelere seu processo criativo e saia na frente da concorrência com IA.', 'Accelerate your creative process and get ahead of the competition with AI.') },
+        { icon: '🎯', title: t('Artistas & Ilustradores', 'Artists & Illustrators'), desc: t('Expanda para o mercado de tatuagem usando IA como ferramenta profissional.', 'Expand into the tattoo market using AI as a professional tool.') },
+      ],
+
+      depoTitle: t('RESULTADOS REAIS', 'REAL RESULTS'),
+      depoSub:   t('Veja o que os alunos estão criando e dizendo:', 'See what students are creating and saying:'),
+
+      commLine1: t('ENTRE NA', 'JOIN THE'),
+      commLine2: t('COMUNIDADE VIP', 'VIP COMMUNITY'),
+      commDesc:  t('Mais de 2.000 tatuadores já estão usando IA para criar artes incríveis, atrair clientes e ganhar mais. Faça parte agora.', 'Over 2,000 tattoo artists are already using AI to create incredible art, attract clients and earn more. Join now.'),
+      commSeeResults: t('Ver Resultados', 'See Results'),
+
+      bonusLabel: t('BÔNUS EXCLUSIVOS', 'EXCLUSIVE BONUSES'),
+      bonusTitle: t('Inclusos na sua compra', 'Included in your purchase'),
+      bonusSub:   t('Junto com o curso, você recebe gratuitamente:', 'Along with the course, you get for free:'),
+      bonusFreeLabel: t('INCLUSO', 'INCLUDED'),
+      bonuses: [
+        { icon: '📖', tag: t('BÔNUS 1', 'BONUS 1'), title: t('Guia ChatGPT para Tatuadores', 'ChatGPT Guide for Tattoo Artists'), desc: t('Dezenas de prompts prontos + 2 geradores exclusivos: lettering e recriação de tatuagens.', 'Dozens of ready prompts + 2 exclusive generators: lettering and tattoo recreation.'), val: t('R$97', '$20') },
+        { icon: '🔥', tag: t('BÔNUS 2', 'BONUS 2'), title: t('Pack de Prompts Premium', 'Premium Prompt Pack'), desc: t('200+ prompts por estilo: realismo, blackwork, aquarela, geométrico, japonês e mais.', '200+ prompts by style: realism, blackwork, watercolor, geometric, Japanese and more.'), val: t('R$67', '$14') },
+        { icon: '💬', tag: t('BÔNUS 3', 'BONUS 3'), title: t('Grupo VIP no WhatsApp', 'VIP WhatsApp Group'), desc: t('Grupo exclusivo de alunos para dúvidas, criações e suporte direto do Willian.', 'Exclusive student group for questions, creations and direct support from Willian.'), val: t('Exclusivo', 'Exclusive') },
+      ],
+
+      pricingTitle: t('INVESTIMENTO', 'INVESTMENT'),
+      pricingSub:   t('Acesso vitalício — pagamento único', 'Lifetime access — one-time payment'),
+
+      plan1tag:   'STARTER',
+      plan1name:  'Tattoo AI Master',
+      plan1price: t('R$197', '$40'),
+      plan1note:  t('pagamento único', 'one-time'),
+      plan1features: [
+        t('Curso completo Tattoo AI Master FX', 'Complete Tattoo AI Master FX Course'),
+        t('Todos os 6 módulos', 'All 6 modules'),
+        t('Banco de prompts básico', 'Basic prompt library'),
+        t('Suporte por e-mail', 'Email support'),
+        t('Certificado de conclusão', 'Completion certificate'),
+      ],
+      plan1cta: t('Escolher Starter', 'Choose Starter'),
+
+      plan2popular: t('MAIS POPULAR', 'MOST POPULAR'),
+      plan2tag:     'GOLD',
+      plan2name:    'Tattoo AI Master GOLD',
+      plan2price:   t('R$297', '$60'),
+      plan2note:    t('pagamento único', 'one-time'),
+      plan2features: [
+        t('Tudo do plano Starter', 'Everything in Starter'),
+        t('Guia ChatGPT para Tatuadores', 'ChatGPT Guide for Tattoo Artists'),
+        t('Pack de 200+ Prompts Premium', '200+ Premium Prompts Pack'),
+        t('Grupo VIP no WhatsApp', 'VIP WhatsApp Group'),
+        t('Suporte prioritário com Willian', 'Priority support with Willian'),
+        t('Atualizações vitalícias', 'Lifetime updates'),
+      ],
+      plan2cta: t('Quero o GOLD', 'Get GOLD'),
+
+      guarTitle: t('Garantia Total de 7 Dias', '7-Day Money-Back Guarantee'),
+      guarText:  t('Se você não ficar 100% satisfeito por qualquer motivo, basta nos contatar em até 7 dias após a compra e devolvemos todo o seu dinheiro. Sem burocracia, sem perguntas.', "If you're not 100% satisfied for any reason, contact us within 7 days of purchase and we'll refund every cent. No hassle, no questions."),
+
+      instructorLabel: t('SOBRE O CRIADOR', 'ABOUT THE CREATOR'),
+      instructorName:  'Willian Ludgero',
+      instructorBio:   t('Willian Ludgero é o criador do primeiro curso de IA para tatuadores do Brasil. Com anos de experiência no mercado tattoo e uma paixão por tecnologia, ele desenvolveu um método único para transformar ideias em artes profissionais com IA — sem precisar saber desenhar.', 'Willian Ludgero is the creator of the first AI course for tattoo artists in Brazil. With years of experience in the tattoo market and a passion for technology, he developed a unique method to transform ideas into professional art with AI — no drawing skills needed.'),
+
+      // Course toggles
+      toggleMJ:   () => this.setState(s => ({ expandedId: s.expandedId === 'mj'   ? null : 'mj' })),
+      toggleGrok: () => this.setState(s => ({ expandedId: s.expandedId === 'grok' ? null : 'grok' })),
+      toggleFX:   () => this.setState(s => ({ expandedId: s.expandedId === 'fx'   ? null : 'fx' })),
+      stopMJ:   (e) => { e.stopPropagation(); e.preventDefault(); },
+      stopGrok: (e) => { e.stopPropagation(); e.preventDefault(); },
+      stopFX:   (e) => { e.stopPropagation(); e.preventDefault(); },
+      mjExpanded:   expandedId === 'mj',
+      grokExpanded: expandedId === 'grok',
+      fxExpanded:   expandedId === 'fx',
+
+      // Course section
+      coursesTitle: t('NOSSOS CURSOS', 'OUR COURSES'),
+      coursesSub:   t('Escolha o curso ideal para o seu workflow', 'Choose the right course for your workflow'),
+      buyLabel:     t('Comprar', 'Buy Now'),
+      seeDetails:   t('ver detalhes ↓', 'see details ↓'),
+
+      // MidJourney
+      mjName:      'Tattoo AI Master MIDJOURNEY',
+      mjSub:       t('Curso Profissional de IA para Tatuadores', 'Professional AI Course for Tattoo Artists'),
+      mjF1:        t('Via Discord', 'Via Discord'),
+      mjF2:        'SREF & Character Reference',
+      mjF3:        t('Remix & Variações', 'Remix & Variations'),
+      mjFullTitle: 'Master MidJourney',
+      mjFullSub:   t('Curso Profissional de IA para Tatuadores', 'Professional AI Course for Tattoo Artists'),
+      mjFeatures: [
+        t('Aprenda MidJourney via Discord', 'Learn MidJourney via Discord'),
+        t('Estrutura Profissional de Prompts', 'Professional Prompt Structure'),
+        'SREF & Character Reference',
+        t('Remix & Variações', 'Remix & Variations'),
+        t('Crie Designs Profissionais de Tatuagem', 'Create Professional Tattoo Designs'),
+      ],
+      mjBonuses: [
+        { icon: '📘', text: t('2 Guias de Prompts', '2 Prompt Guides') },
+        { icon: '🎥', text: t('Curso Completo em Vídeo', 'Complete Video Course') },
+      ],
+      mjReq: t('Requer Assinatura do MidJourney', 'Requires MidJourney Subscription'),
+
+      // GROK
+      grokName:      'Tattoo AI Master GROK',
+      grokSub:       t('Workflow Profissional de IA para Tatuadores', 'Professional AI Workflow for Tattoo Artists'),
+      grokF1:        t('Prompts Profissionais', 'Professional Prompts'),
+      grokF2:        t('Stencils Limpos', 'Clean Stencils'),
+      grokF3:        t('Imagens de Referência', 'Reference Images'),
+      grokFullTitle: 'Master Grok AI',
+      grokFullSub:   t('Workflow Profissional de IA para Tatuadores', 'Professional AI Workflow for Tattoo Artists'),
+      grokFeatures: [
+        t('Crie Prompts Profissionais', 'Create Professional Prompts'),
+        t('Gere Stencils Limpos', 'Generate Clean Stencils'),
+        t('Edição de Imagens com IA', 'AI Image Editing'),
+        t('Use Imagens de Referência', 'Use Reference Images'),
+      ],
+      grokBonuses: [
+        { icon: '📱', text: t('App Exclusivo de Prompts', 'Exclusive Prompt App') },
+        { icon: '📘', text: t('Guia de Prompts', 'Prompt Guide') },
+        { icon: '🎥', text: t('Curso Completo em Vídeo', 'Complete Video Course') },
+      ],
+      grokReq: t('Requer Assinatura do Grok', 'Requires Grok Subscription'),
+
+      // FX
+      fxName:      'Tattoo AI Master FX',
+      fxSub:       t('Criação Ilimitada com IA Gratuita', 'Unlimited Tattoo Creation with Free AI'),
+      fxF1:        t('Gerações Ilimitadas', 'Unlimited Generations'),
+      fxF2:        t('App Exclusivo FX', 'Exclusive FX App'),
+      fxF3:        t('Guia com 200+ Páginas', '200+ Page Guide'),
+      fxFullTitle: t('Criação Ilimitada de Tatuagens', 'Unlimited Tattoo Creation'),
+      fxFullSub:   t('Powered by Gemini · IA 100% Gratuita · Sem Mensalidades', 'Powered by Gemini · 100% Free AI · No Monthly Fees'),
+      fxFeatures: [
+        t('Arte IA Ilimitada', 'Unlimited AI Artwork'),
+        t('App Exclusivo FX', 'Exclusive FX App'),
+        t('Guia de Prompts com 200+ Páginas', '200+ Page Prompt Guide'),
+        t('Prompts Profissionais para Tatuagem', 'Professional Tattoo Prompts'),
+        t('Curso Completo em Vídeo', 'Complete Video Course'),
+      ],
+      fxBonuses: [
+        { icon: '🎥', text: t('Curso Completo em Vídeo', 'Complete Video Course') },
+      ],
+      fxNote: t('Powered by Gemini · Sem Mensalidades', 'Powered by Gemini · No Monthly Fees'),
+
+      footerRights: t('© 2026 Tattoo AI Master. Todos os direitos reservados.', '© 2026 Tattoo AI Master. All rights reserved.'),
+      footerLinks:  [t('Política de Privacidade', 'Privacy Policy'), t('Termos de Uso', 'Terms of Use'), t('Contato', 'Contact')],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

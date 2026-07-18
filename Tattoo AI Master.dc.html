@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tattoo AI Master — Cursos de IA para Tatuadores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ══ RESET ══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ══ DESIGN TOKENS ══ */
+    :root {
+      --c-bg:       #080808;
+      --c-surface:  #0d0d0d;
+      --c-surface2: #111;
+      --c-border:   rgba(255,255,255,.07);
+      --c-text-dim: rgba(255,255,255,.45);
+      --c-green:    #39FF14;
+      --c-glow:     rgba(57,255,20,.35);
+      --c-green-dim:rgba(57,255,20,.1);
+      --ease-smooth:cubic-bezier(.4,0,.2,1);
+      --ease-spring:cubic-bezier(.34,1.56,.64,1);
+      --ease-out:   cubic-bezier(0,0,.2,1);
+      --dur-base:   280ms;
+      --dur-slow:   520ms;
+      --r-md: 16px; --r-lg: 22px; --r-xl: 28px;
+    }
+
+    /* ══ KEYFRAMES ══ */
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+    @keyframes glow   { 0%,100%{opacity:.35} 50%{opacity:.75} }
+    @keyframes aurora { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    @keyframes pulseBtn { 0%,100%{box-shadow:0 8px 28px rgba(57,255,20,.4)} 50%{box-shadow:0 8px 40px rgba(57,255,20,.7)} }
+    @keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+    @keyframes neonPulse  { 0%,100%{filter:drop-shadow(0 0 10px rgba(57,255,20,.65)) drop-shadow(0 0 28px rgba(57,255,20,.3))} 50%{filter:drop-shadow(0 0 20px rgba(57,255,20,1)) drop-shadow(0 0 52px rgba(57,255,20,.55)) drop-shadow(0 0 90px rgba(57,255,20,.2))} }
+
+    /* ══ SCROLL REVEAL ══ */
+    [data-reveal] {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+    }
+    [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+    [data-reveal-d="1"] { transition-delay: 80ms; }
+    [data-reveal-d="2"] { transition-delay: 160ms; }
+    [data-reveal-d="3"] { transition-delay: 240ms; }
+    [data-reveal-d="4"] { transition-delay: 320ms; }
+    @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity:1; transform:none; transition:none; } }
+
+    /* ══ SCROLL PROGRESS ══ */
+    #scroll-bar {
+      position:fixed;top:0;left:0;z-index:9999;height:3px;width:0%;
+      background:linear-gradient(90deg,#39FF14,#00e055);
+      box-shadow:0 0 10px rgba(57,255,20,.6);
+      border-radius:0 2px 2px 0; pointer-events:none;
+      transition:width .1s linear;
+    }
+
+    /* ══ MOBILE STICKY CTA ══ */
+    #sticky-cta {
+      position:fixed;bottom:0;left:0;right:0;z-index:400;
+      padding:12px 20px;
+      padding-bottom:max(14px,env(safe-area-inset-bottom));
+      background:rgba(8,8,8,.96); backdrop-filter:blur(14px);
+      border-top:1px solid rgba(57,255,20,.2);
+      transform:translateY(100%);
+      transition:transform .35s var(--ease-out);
+    }
+    @media (min-width:769px) { #sticky-cta { display:none !important; } }
+
+    /* ══ NAV ══ */
+    .nav-scrolled {
+      background:rgba(8,8,8,.92) !important;
+      backdrop-filter:blur(20px) !important;
+      padding:10px 0 !important;
+      border-bottom:1px solid rgba(57,255,20,.1) !important;
+    }
+    .nav-link { display:none; }
+    @media (min-width:960px) { .nav-link { display:block; } }
+
+    /* ══ BUTTONS ══ */
+    .btn-g { transition:transform var(--dur-base) var(--ease-spring),box-shadow var(--dur-base) var(--ease-smooth); }
+    .btn-g:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 18px 46px var(--c-glow) !important; }
+    .btn-g:active { transform:translateY(0) scale(.98); }
+
+    /* ══ CARDS ══ */
+    .card-h { transition:transform var(--dur-base) var(--ease-smooth),border-color var(--dur-base); }
+    .card-h:hover { transform:translateY(-5px); border-color:var(--c-green) !important; }
+    .lnk { transition:color 150ms; }
+    .lnk:hover { color:var(--c-green) !important; }
+
+    /* ══ COURSE CARDS ══ */
+    .course-card { transition:transform var(--dur-base),border-color var(--dur-base),box-shadow var(--dur-base); }
+    .course-card:hover { transform:translateY(-8px); border-color:rgba(255,255,255,.22) !important; box-shadow:0 28px 64px rgba(0,0,0,.65); }
+    .course-card:hover .cover-img { transform:scale(1.07); }
+    .cover-img { transition:transform .6s ease; }
+
+    /* ══ PACKS ══ */
+    .pack-card { transition:transform var(--dur-base),border-color var(--dur-base),box-shadow var(--dur-base); }
+    .pack-card:hover { transform:translateY(-8px); border-color:rgba(57,255,20,.5) !important; box-shadow:0 28px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(57,255,20,.3); }
+    .pack-card:hover .pack-img { transform:scale(1.04); }
+    .pack-img { transition:transform .6s ease; }
+
+    /* ══ GALLERY ══ */
+    .gal-item { transition:transform var(--dur-base); }
+    .gal-item:hover { transform:scale(1.02); }
+    .gal-item:hover img { transform:scale(1.06) !important; }
+    .gal-item:hover .gal-zoom { opacity:1 !important; }
+    .gal-item img { transition:transform .4s ease; }
+    .vid-item img { transition:transform .4s ease; }
+    .vid-item:hover img { transform:scale(1.04); }
+
+    /* ══ TOOLS ══ */
+    .tools-feat { transition:transform var(--dur-base),border-color var(--dur-base); }
+    .tools-feat:hover { transform:translateY(-5px); border-color:rgba(57,255,20,.35) !important; }
+
+    /* ══ CAROUSEL 3D ══ */
+    .car3d-slide { transition:transform .52s cubic-bezier(.4,0,.2,1), opacity .52s cubic-bezier(.4,0,.2,1), box-shadow .52s; }
+    .car3d-slide:hover { filter:brightness(1.1); }
+
+    /* ══ PARALLAX ══ */
+    .par-el { pointer-events:none; will-change:transform; }
+
+    /* ══════════ FX ENGINE v2 — NEON INK LAYER ══════════ */
+
+    /* Neon sign flicker — como letreiro de estúdio de tattoo real */
+    @keyframes neonFlicker {
+      0%, 6.9%, 7.4%, 8.9%, 42%, 42.9%, 100% { opacity:1 }
+      7%, 7.3% { opacity:.45 }
+      9%, 9.2% { opacity:.7 }
+      42.3%, 42.6% { opacity:.5 }
+    }
+
+    /* Canvas global de partículas — blend screen some em fundos claros */
+    #fx-canvas {
+      position:fixed; inset:0; z-index:500;
+      pointer-events:none; mix-blend-mode:screen;
+    }
+
+    /* Grão de filme */
+    #fx-grain {
+      position:fixed; inset:-100px; z-index:460; pointer-events:none;
+      opacity:.045; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation:grainShift 1.2s steps(4) infinite;
+    }
+    @keyframes grainShift {
+      0%{transform:translate(0,0)} 25%{transform:translate(-42px,28px)}
+      50%{transform:translate(30px,-38px)} 75%{transform:translate(-24px,-20px)} 100%{transform:translate(0,0)}
+    }
+
+    /* Cursor aura — só desktop */
+    #fx-dot, #fx-ring { position:fixed; top:0; left:0; pointer-events:none; z-index:2000; opacity:0; }
+    #fx-dot {
+      width:6px; height:6px; border-radius:50%; background:#39FF14;
+      box-shadow:0 0 10px #39FF14, 0 0 26px rgba(57,255,20,.6);
+      transform:translate(-50%,-50%);
+    }
+    #fx-ring {
+      width:38px; height:38px; border-radius:50%;
+      border:1.5px solid rgba(57,255,20,.55);
+      box-shadow:0 0 18px rgba(57,255,20,.25), inset 0 0 12px rgba(57,255,20,.12);
+      transform:translate(-50%,-50%);
+      transition:width .28s var(--ease-spring), height .28s var(--ease-spring), border-color .28s;
+      mix-blend-mode:screen;
+    }
+    #fx-ring.fx-hot { width:64px; height:64px; border-color:rgba(57,255,20,.95); }
+    @media (pointer:coarse) { #fx-dot, #fx-ring { display:none !important } }
+
+    /* Anel conic girando nos cards de curso */
+    @property --ang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+    .course-card, .tools-feat { position:relative; }
+    .course-card::before {
+      content:''; position:absolute; inset:0; border-radius:22px; padding:1.5px;
+      background:conic-gradient(from var(--ang),transparent 0 58%,rgba(57,255,20,.85) 72%,#c8ffbe 78%,rgba(57,255,20,.85) 84%,transparent 96%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;
+      opacity:0; transition:opacity .4s; animation:ringSpin 3.4s linear infinite;
+      pointer-events:none; z-index:4;
+    }
+    .course-card:hover::before { opacity:1; }
+    @keyframes ringSpin { to { --ang:360deg } }
+
+    /* Glare que segue o mouse dentro dos cards (via --mx/--my do JS) */
+    .course-card::after, .tools-feat::after {
+      content:''; position:absolute; inset:0; border-radius:inherit; z-index:3;
+      background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(57,255,20,.13),transparent 55%);
+      opacity:0; transition:opacity .35s; pointer-events:none;
+    }
+    .course-card:hover::after, .tools-feat:hover::after { opacity:1; }
+
+    /* Reflexo de chão no carrossel 3D — aplicado por slide via JS (só nos visíveis) */
+
+    /* Entrada cinematográfica do hero */
+    [data-hero] h1 { animation:heroRise .85s .08s var(--ease-out) both; }
+    [data-hero] p  { animation:heroRise .85s .22s var(--ease-out) both; }
+    [data-hero] .hero-logo-wrap { animation:heroPhoto 1.1s .18s var(--ease-out) both; }
+    @keyframes heroRise  { from { opacity:0; transform:translateY(46px) } to { opacity:1; transform:translateY(0) } }
+    /* 'to' sem opacity — volta ao valor inline do elemento (ghosts têm opacity .06) */
+    @keyframes heroPhoto { from { opacity:0; transform:translateX(64px) } to { transform:translateX(0) } }
+
+    /* Títulos entram desfocados e "focam" conforme o scroll (Chrome/Edge novos) */
+    @supports (animation-timeline: view()) {
+      section h2 {
+        animation:focusIn both;
+        animation-timeline:view();
+        animation-range:entry 0% entry 55%;
+      }
+      @keyframes focusIn {
+        from { filter:blur(12px) brightness(1.8); }
+        to   { filter:blur(0) brightness(1); }
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      #fx-canvas, #fx-grain, #fx-dot, #fx-ring { display:none !important; }
+      [data-hero] h1, [data-hero] p, [data-hero] .hero-logo-wrap { animation:none !important; }
+      .course-card::before { animation:none !important; }
+    }
+
+    /* ══════════ GLITCH ENGINE ══════════ */
+    /* Título com fenda RGB — usa data-text nas duas cópias */
+    .glitch { position:relative; display:inline-block; }
+    .glitch::before, .glitch::after {
+      content:attr(data-text); position:absolute; inset:0;
+      color:#fff; -webkit-text-fill-color:#fff; overflow:hidden;
+    }
+    .glitch::before { left:2px; text-shadow:-2px 0 #39FF14; animation:glitchTop 3.4s steps(2,end) infinite; }
+    .glitch::after  { left:-2px; text-shadow:-2px 0 #ff0059, 2px 2px #00e0ff; animation:glitchBot 2.7s steps(2,end) infinite; }
+    @keyframes glitchTop {
+      0%,72%,100% { clip-path:inset(0 0 100% 0); transform:translate(0) }
+      74% { clip-path:inset(0 0 62% 0); transform:translate(-3px,-1px) }
+      77% { clip-path:inset(12% 0 40% 0); transform:translate(4px,1px) }
+      80% { clip-path:inset(0 0 78% 0); transform:translate(-2px,0) }
+      83% { clip-path:inset(40% 0 20% 0); transform:translate(3px,-1px) }
+      86% { clip-path:inset(0 0 100% 0); transform:translate(0) }
+    }
+    @keyframes glitchBot {
+      0%,68%,100% { clip-path:inset(100% 0 0 0); transform:translate(0) }
+      70% { clip-path:inset(58% 0 0 0); transform:translate(3px,1px) }
+      74% { clip-path:inset(72% 0 8% 0); transform:translate(-4px,-1px) }
+      78% { clip-path:inset(45% 0 30% 0); transform:translate(2px,1px) }
+      82% { clip-path:inset(88% 0 0 0); transform:translate(-3px,0) }
+      86% { clip-path:inset(100% 0 0 0); transform:translate(0) }
+    }
+
+    /* Glitch periódico da foto do Willian — burst curto a cada ciclo */
+    .photo-glitch { animation:photoGlitch 7s linear infinite; }
+    @keyframes photoGlitch {
+      0%,87%,100% { filter:drop-shadow(-18px 0 48px rgba(0,0,0,.55)); clip-path:inset(0 0 0 0); transform:translateX(0) }
+      88% { filter:drop-shadow(-6px 0 rgba(255,0,89,.85)) drop-shadow(6px 0 rgba(0,224,255,.85)); clip-path:inset(18% 0 60% 0); transform:translateX(-5px) }
+      90% { filter:drop-shadow(6px 0 rgba(255,255,255,.9)) drop-shadow(-4px 0 rgba(255,0,89,.7)); clip-path:inset(54% 0 20% 0); transform:translateX(6px) }
+      92% { filter:drop-shadow(-5px 0 rgba(255,0,89,.7)) drop-shadow(4px 0 rgba(0,224,255,.7)); clip-path:inset(34% 0 40% 0); transform:translateX(-4px) }
+      94% { filter:drop-shadow(4px 0 rgba(0,224,255,.8)) drop-shadow(-3px 0 rgba(255,255,255,.6)); clip-path:inset(70% 0 6% 0); transform:translateX(4px) }
+      96% { filter:drop-shadow(-18px 0 48px rgba(0,0,0,.55)); clip-path:inset(8% 0 74% 0); transform:translateX(-2px) }
+    }
+
+    /* Glitch on-hover para capas e slides — SÓ filter+clip (nunca transform,
+       para não quebrar o posicionamento 3D do coverflow) */
+    .fx-glitching { animation:fxGlitch .5s linear 1; }
+    @keyframes fxGlitch {
+      0%   { filter:none; clip-path:inset(0 0 0 0) }
+      9%   { filter:drop-shadow(-4px 0 #ff0059) drop-shadow(4px 0 #00e0ff) saturate(1.5); clip-path:inset(4% 0 66% 0) }
+      18%  { filter:drop-shadow(5px 0 #39FF14) contrast(1.4) brightness(1.15); clip-path:inset(52% 0 12% 0) }
+      27%  { filter:drop-shadow(-5px 0 #ff0059) drop-shadow(3px 0 #00e0ff); clip-path:inset(26% 0 44% 0) }
+      36%  { filter:none; clip-path:inset(0 0 0 0) }
+      47%  { filter:drop-shadow(4px 0 #00e0ff) saturate(1.6); clip-path:inset(70% 0 6% 0) }
+      58%  { filter:hue-rotate(35deg) contrast(1.3); clip-path:inset(14% 0 52% 0) }
+      68%  { filter:drop-shadow(-3px 0 #39FF14) brightness(1.2); clip-path:inset(40% 0 30% 0) }
+      100% { filter:none; clip-path:inset(0 0 0 0) }
+    }
+
+    /* Fita glitch que corta a tela em transições de seção */
+    .glitch-bar {
+      position:fixed; left:0; width:100%; height:2px; z-index:1800; pointer-events:none;
+      background:linear-gradient(90deg,transparent,#39FF14,#00e0ff,transparent);
+      mix-blend-mode:screen; opacity:0;
+    }
+
+    /* ══ DEPOIMENTOS — marquee + scanlines ══ */
+    .depo-scan {
+      background:repeating-linear-gradient(0deg,rgba(57,255,20,.04) 0 1px,transparent 1px 4px);
+      animation:scanMove 8s linear infinite;
+    }
+    @keyframes scanMove { to { background-position:0 400px } }
+    .depo-marquee { width:100%; overflow:hidden; -webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+    .depo-track { display:flex; gap:26px; width:max-content; animation:depoScroll 42s linear infinite; will-change:transform; }
+    .depo-marquee:hover .depo-track { animation-play-state:paused; }
+    @keyframes depoScroll { to { transform:translateX(-50%) } }
+    .depo-card {
+      position:relative; flex:none; width:min(280px,74vw); border-radius:22px; overflow:hidden;
+      background:#0d0d0d; border:1px solid rgba(255,255,255,.07);
+      box-shadow:0 18px 46px rgba(0,0,0,.5);
+      transition:transform .35s var(--ease-spring), border-color .35s, box-shadow .35s;
+    }
+    .depo-card img { width:100%; height:auto; display:block; }
+    .depo-card figcaption {
+      position:absolute; left:0; right:0; bottom:0; padding:26px 18px 14px;
+      background:linear-gradient(transparent,rgba(6,6,6,.92));
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .depo-stars { color:var(--c-green); font-size:13px; letter-spacing:2px; }
+    .depo-name  { color:#fff; font-size:12px; font-weight:700; font-family:'Outfit',sans-serif; }
+    .depo-card:hover {
+      transform:translateY(-8px) scale(1.03); border-color:rgba(57,255,20,.5);
+      box-shadow:0 26px 60px rgba(0,0,0,.65), 0 0 0 1px rgba(57,255,20,.3);
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      .glitch::before, .glitch::after { animation:none !important; opacity:0 !important; }
+      .photo-glitch { animation:none !important; }
+      .depo-track { animation:none !important; }
+      .depo-scan { animation:none !important; }
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width:960px) {
+      .hero-logo-wrap { display:none !important; }
+      /* Foto do Willian como fundo atmosférico no celular */
+      .hero-photo {
+        display:block !important;
+        right:-16% !important; bottom:0 !important; top:auto !important;
+        width:150vw !important; max-width:none !important;
+        opacity:.34; z-index:1 !important;
+        -webkit-mask:radial-gradient(135% 82% at 76% 84%,#000 30%,transparent 72%);
+                mask:radial-gradient(135% 82% at 76% 84%,#000 30%,transparent 72%);
+      }
+      .hero-photo img { animation:none !important; filter:none !important; }
+      [data-hero] { min-height:auto !important; padding-bottom:0 !important; }
+      [data-hero] > div[style*="flex:1"] { padding-bottom:80px !important; }
+      .courses-grid { grid-template-columns:1fr !important; }
+      .depo-row { flex-direction:column !important; align-items:center !important; }
+      .plans-row { flex-direction:column !important; align-items:center !important; }
+      .packs-grid { grid-template-columns:1fr 1fr !important; max-width:640px;margin:0 auto; }
+      .whom-row { flex-direction:column !important; }
+      .footer-inner { flex-direction:column !important; text-align:center !important; align-items:center !important; }
+      .nav-cta { display:none !important; }
+      .tools-grid { grid-template-columns:1fr 1fr !important; }
+      .tools-inner { flex-direction:column !important; }
+      .tools-videos-grid { grid-template-columns:repeat(3,1fr) !important; }
+    }
+    @media (max-width:600px) {
+      .modal-gallery { grid-template-columns:1fr 1fr !important; }
+      .modal-videos  { grid-template-columns:1fr !important; }
+      .hero-cta-box  { display:none !important; }
+      .tools-grid    { grid-template-columns:1fr 1fr !important; }
+      .packs-grid    { grid-template-columns:1fr !important; max-width:420px !important; }
+      .modal-mods    { grid-template-columns:1fr !important; }
+    }
+  </style>
+</helmet>
+
+<!-- ══ SCROLL PROGRESS ══ -->
+<div id="scroll-bar"></div>
+
+<!-- ══ FX LAYER ══ -->
+<div id="fx-grain"></div>
+<canvas id="fx-canvas"></canvas>
+<div id="fx-dot"></div>
+<div id="fx-ring"></div>
+
+<!-- ══ MOBILE STICKY CTA ══ -->
+<div id="sticky-cta">
+  <a href="#cursos" class="btn-g" style="display:block;text-align:center;background:var(--c-green);color:#000;padding:15px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 24px var(--c-glow)">{{ heroCta }}</a>
+</div>
+
+<!-- ══ NAVBAR ══ -->
+<nav style="position:fixed;top:0;left:0;width:100%;z-index:200;padding:16px 0;transition:all .3s" data-nav>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center">
+    <a href="#"><img src="uploads/logo%20tols.png" alt="Tattoo AI Master" style="height:42px;width:auto;filter:drop-shadow(0 0 10px rgba(57,255,20,.4))"></a>
+    <div style="display:flex;align-items:center;gap:24px">
+      <a href="#cursos" class="nav-link lnk" style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.3px">{{ cursosNavLabel }}</a>
+      <a href="#tools" class="nav-link lnk" style="font-size:13px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.3px">{{ toolsNavLabel }}</a>
+      <button onClick="{{ toggleLang }}" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px">{{ langLabel }}</button>
+      <a href="#cursos" class="btn-g nav-cta" style="background:var(--c-green);color:#000;padding:11px 28px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 4px 20px var(--c-glow)">{{ navCta }}</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section data-hero style="position:relative;background:#080808;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;padding-top:92px">
+  <!-- ambient glow -->
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 90% 90% at 5% -15%,rgba(57,255,20,.08) 0%,transparent 50%),radial-gradient(ellipse 60% 60% at 90% 80%,rgba(57,255,20,.04) 0%,transparent 55%);background-size:300% 300%;animation:aurora 14s ease infinite;z-index:0"></div>
+  <div style="position:absolute;top:0;left:0;width:70vw;height:70vw;background:radial-gradient(circle,rgba(57,255,20,.06) 0%,transparent 65%);pointer-events:none;animation:glow 6s ease infinite;z-index:1"></div>
+
+  <!-- fundo (1) background texture — parallax top-left -->
+  <div class="hero-logo-wrap par-el" data-par-speed="0.2" style="position:absolute;left:-5%;top:-5%;width:min(54vw,640px);z-index:2;pointer-events:none;opacity:0.1;mix-blend-mode:screen">
+    <img src="uploads/imagens/fundo%20(1).png" alt="" style="width:100%;height:auto;display:block">
+  </div>
+
+  <!-- Logo ghost watermark — parallax center-right -->
+  <div class="hero-logo-wrap par-el" data-par-speed="0.14" style="position:absolute;right:1%;top:10%;width:48vw;max-width:560px;z-index:3;pointer-events:none;opacity:0.06">
+    <img src="uploads/logo%20tols.png" alt="" style="width:100%;height:auto;filter:brightness(10)">
+  </div>
+
+  <!-- Willian photo — anchored right, slightly raised -->
+  <div class="hero-photo hero-logo-wrap" style="position:absolute;right:0;bottom:0;width:min(60vw,760px);z-index:6;pointer-events:none">
+    <img src="uploads/imagens/eu.png" alt="Willian Ludgero" class="photo-glitch" style="width:100%;height:auto;display:block;filter:drop-shadow(-18px 0 48px rgba(0,0,0,.55))">
+  </div>
+
+  <!-- Main content -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 40px 40px;position:relative;z-index:6">
+    <div style="margin-bottom:18px">
+      <span style="background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.22);color:var(--c-green);font-size:10px;font-weight:900;letter-spacing:3px;padding:6px 16px;border-radius:100px;text-transform:uppercase">{{ badge }}</span>
+    </div>
+    <h1 style="font-family:'Outfit',sans-serif;font-weight:900;line-height:.88;letter-spacing:-4px;color:#fff;margin-bottom:24px;max-width:840px">
+      <span class="glitch" data-text="TATTOO" style="display:block;font-size:clamp(70px,13.5vw,195px)">TATTOO</span>
+      <span class="glitch" data-text="AI MASTER." style="display:block;font-size:clamp(46px,9vw,130px);background:linear-gradient(135deg,#39FF14 0%,#00e055 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;animation:neonPulse 3s ease-in-out infinite,neonFlicker 9s linear 2s infinite">AI MASTER.</span>
+    </h1>
+    <p style="font-size:clamp(14px,1.8vw,18px);color:rgba(255,255,255,.48);line-height:1.72;max-width:480px;margin-bottom:32px">{{ heroDesc }}</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+      <a href="#cursos" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:var(--c-green);color:#000;padding:15px 40px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 28px var(--c-glow);animation:pulseBtn 3s ease infinite;white-space:nowrap">
+        {{ heroCta }}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#cursos" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.42);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap">
+        {{ heroVerCursos }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom stats bar -->
+  <div style="border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:stretch;flex-wrap:wrap;position:relative;z-index:6">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+      <div style="flex:1;min-width:120px;padding:18px 24px;border-right:1px solid rgba(255,255,255,.07)">
+        <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:900;color:var(--c-green);line-height:1;margin-bottom:3px">{{ s.n }}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;font-weight:600">{{ s.l }}</div>
+      </div>
+    </sc-for>
+    <div style="flex:none;display:flex;align-items:center;padding:18px 24px">
+      <a href="#cursos" class="btn-g" style="background:var(--c-green);color:#000;padding:12px 26px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 5px 24px var(--c-glow);white-space:nowrap">{{ heroCta }}</a>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div style="position:absolute;bottom:82px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:8;opacity:.3;animation:scrollBounce 2.2s ease-in-out infinite;pointer-events:none">
+    <span style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#fff">scroll</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- ══ TICKER ══ -->
+<div style="background:var(--c-green);padding:12px 0;overflow:hidden;border-top:2px solid rgba(0,0,0,.1);border-bottom:2px solid rgba(0,0,0,.1)">
+  <div style="display:flex;animation:ticker 22s linear infinite;white-space:nowrap;width:max-content">
+    <span style="font-size:11px;font-weight:900;color:rgba(0,0,0,.6);letter-spacing:3px;text-transform:uppercase;padding:0 20px">BLACKWORK • REALISMO • AQUARELA • GEOMÉTRICO • NEOTRADICIONAL • JAPONÊS • FINELINE • DOTWORK • BIOMECÂNICO • OLD SCHOOL • TRASH POLKA • MAORI •&nbsp;&nbsp;&nbsp;BLACKWORK • REALISMO • AQUARELA • GEOMÉTRICO • NEOTRADICIONAL • JAPONÊS • FINELINE • DOTWORK • BIOMECÂNICO • OLD SCHOOL • TRASH POLKA • MAORI •</span>
+  </div>
+</div>
+
+<!-- ══ NOSSOS CURSOS ══ -->
+<section id="cursos" style="background:#080808;padding:60px 0 50px;position:relative;overflow:hidden">
+  <!-- Zeus ghost texture — parallax right -->
+  <div class="par-el" data-par-speed="0.1" style="position:absolute;right:-8%;top:0%;width:min(50vw,560px);pointer-events:none;opacity:0.07;mix-blend-mode:screen;z-index:0">
+    <img src="uploads/imagens/fundo%20(2).png" alt="" style="width:100%;height:auto;display:block">
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;position:relative;z-index:1">
+    <div style="margin-bottom:36px" data-reveal>
+      <h2 class="glitch" data-text="{{ coursesTitle }}" style="font-family:'Outfit',sans-serif;font-size:clamp(52px,9vw,120px);font-weight:900;letter-spacing:-3.5px;line-height:.9;color:#fff">{{ coursesTitle }}</h2>
+      <p style="margin-top:12px;font-size:16px;color:rgba(255,255,255,.35)">{{ coursesSub }}</p>
+    </div>
+
+    <div class="courses-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+      <sc-for list="{{ courseCards }}" as="c" hint-placeholder-count="3">
+        <div onClick="{{ c.open }}" class="course-card" data-reveal data-reveal-d="{{ c.revealD }}" style="cursor:pointer;display:flex;flex-direction:column;border-radius:22px;overflow:hidden">
+          <div style="position:relative;overflow:hidden">
+            <img src="{{ c.cover }}" alt="{{ c.name }}" class="cover-img" style="width:100%;height:auto;display:block">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,.9) 0%,transparent 40%)"></div>
+            <div style="position:absolute;top:14px;left:14px;background:{{ c.accent }};color:#000;font-size:10px;font-weight:900;letter-spacing:2px;padding:6px 12px;border-radius:100px">{{ c.label }}</div>
+            <div style="position:absolute;bottom:14px;right:14px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:100px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              {{ c.galleryCount }}
+            </div>
+          </div>
+          <div style="padding:22px 24px 26px;display:flex;flex-direction:column;flex:1">
+            <h3 style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#fff;line-height:1.05;margin-bottom:6px">{{ c.name }}</h3>
+            <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:16px;flex:1">{{ c.sub }}</p>
+            <div style="margin-bottom:16px">
+              <span style="font-family:'Outfit',sans-serif;font-size:36px;font-weight:900;color:{{ c.accent }};letter-spacing:-1px;line-height:1">{{ c.price }}</span>
+              <span style="font-size:11px;color:rgba(255,255,255,.3);font-weight:500;margin-left:6px">{{ c.priceNote }}</span>
+            </div>
+            <div class="btn-g" style="display:flex;align-items:center;justify-content:center;gap:8px;background:{{ c.accent }};color:#000;padding:13px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif">
+              {{ seeDetails }}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ══ COURSE MODAL ══ -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ bgCourse }}" style="position:fixed;inset:0;z-index:1000;background:rgba(3,3,3,.88);backdrop-filter:blur(12px);display:flex;align-items:flex-start;justify-content:center;padding:5vh 20px;overflow-y:auto">
+      <div style="max-width:1120px;width:100%;background:#0b0b0b;border:1px solid {{ mc.border }};border-radius:28px;overflow:hidden;position:relative;box-shadow:0 30px 120px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04)">
+
+        <!-- close -->
+        <button onClick="{{ closeCourse }}" style="position:absolute;top:18px;right:18px;z-index:5;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif">✕</button>
+
+        <!-- header -->
+        <div style="position:relative;padding:44px 44px 34px;border-top:4px solid {{ mc.accent }};background:radial-gradient(circle at 20% 0%,{{ mc.glow }} 0%,transparent 55%)">
+          <div style="display:inline-block;background:{{ mc.accent }};color:#000;font-size:10px;font-weight:900;letter-spacing:2.5px;padding:6px 14px;border-radius:100px;margin-bottom:16px">{{ mc.label }}</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-1.5px;color:#fff;line-height:1;margin-bottom:8px">{{ mc.name }}</h3>
+          <p style="font-size:15px;color:rgba(255,255,255,.45);max-width:640px">{{ mc.fullSub }}</p>
+        </div>
+
+        <!-- features + bonuses -->
+        <div style="padding:0 44px 8px;display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1;min-width:250px">
+            <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:{{ mc.accent }};text-transform:uppercase;margin-bottom:16px">{{ whatLabel }}</div>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px">
+              <sc-for list="{{ mc.features }}" as="f" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div style="flex:none;width:20px;height:20px;border-radius:50%;background:{{ mc.soft }};display:flex;align-items:center;justify-content:center">
+                    <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="{{ mc.accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <span style="font-size:15px;color:rgba(255,255,255,.7)">{{ f }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:{{ mc.softer }};border:1px solid {{ mc.border }};border-radius:10px;padding:13px 16px;font-size:13px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:8px">{{ mc.reqIcon }} {{ mc.req }}</div>
+          </div>
+          <div style="flex:none;width:250px;max-width:100%">
+            <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:{{ mc.accent }};text-transform:uppercase;margin-bottom:16px">{{ bonusLabel }}</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ mc.bonuses }}" as="b" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px 16px">
+                  <span style="font-size:22px">{{ b.icon }}</span>
+                  <span style="font-size:13px;color:rgba(255,255,255,.62)">{{ b.text }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULES -->
+        <div style="padding:28px 44px 8px">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2.5px;color:{{ mc.accent }};text-transform:uppercase;margin-bottom:16px">{{ modsLabel }}</div>
+          <div class="modal-mods" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+            <sc-for list="{{ mc.mods }}" as="m" hint-placeholder-count="6">
+              <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px">
+                <div style="flex:none;font-family:'Outfit',sans-serif;font-size:15px;font-weight:900;color:{{ mc.accent }};opacity:.55;line-height:1;min-width:22px;margin-top:2px">{{ m.n }}</div>
+                <div>
+                  <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px">{{ m.title }}</div>
+                  <div style="font-size:12px;color:rgba(255,255,255,.38);line-height:1.5">{{ m.desc }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- GALLERY -->
+        <div style="padding:32px 44px 8px">
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px">
+            <h4 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px">{{ galleryTitle }}</h4>
+            <span style="font-size:13px;color:rgba(255,255,255,.35)">{{ gallerySub }}</span>
+          </div>
+          <div class="modal-gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <sc-for list="{{ mc.gallery }}" as="g" hint-placeholder-count="6">
+              <div onClick="{{ g.open }}" class="gal-item" style="position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;cursor:pointer;background:#151515;border:1px solid rgba(255,255,255,.06)">
+                <img src="{{ g.src }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+                <div class="gal-zoom" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4M11 8v6M8 11h6"/></svg>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- VIDEOS -->
+        <div style="padding:30px 44px 8px">
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px">
+            <h4 style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px">{{ videosTitle }}</h4>
+            <span style="font-size:13px;color:rgba(255,255,255,.35)">{{ videosSub }}</span>
+          </div>
+          <div class="modal-videos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px">
+            <sc-for list="{{ mc.videos }}" as="v" hint-placeholder-count="2">
+              <sc-if value="{{ v.id }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ v.play }}" class="vid-item" style="position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;background:#151515;border:1px solid rgba(255,255,255,.08)">
+                  <img src="https://img.youtube.com/vi/{{ v.id }}/hqdefault.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+                  <div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center">
+                    <div style="width:60px;height:60px;border-radius:50%;background:{{ mc.accent }};display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.5)">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ v.empty }}" hint-placeholder-val="{{ false }}">
+                <div style="aspect-ratio:16/9;border-radius:14px;border:2px dashed rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.32)">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                  <span style="font-size:12px;font-weight:600">{{ addVideoLabel }}</span>
+                </div>
+              </sc-if>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- buy CTA -->
+        <div style="padding:32px 44px 46px;text-align:center">
+          <a href="{{ mc.buyUrl }}" target="_blank" rel="noopener noreferrer" class="btn-g" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:{{ mc.accent }};color:#000;padding:18px 56px;border-radius:100px;font-size:18px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 10px 40px {{ mc.glow }}">
+            {{ buyLabel }}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- IMAGE ZOOM -->
+  <sc-if value="{{ zoomImg }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeZoom }}" style="position:fixed;inset:0;z-index:1200;background:rgba(2,2,2,.94);display:flex;align-items:center;justify-content:center;padding:4vh 20px;cursor:zoom-out">
+      <img src="{{ zoomImg }}" alt="" style="max-width:94vw;max-height:92vh;border-radius:14px;box-shadow:0 0 80px rgba(0,0,0,.9)">
+      <button onClick="{{ closeZoom }}" style="position:fixed;top:24px;right:24px;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+  </sc-if>
+
+  <!-- VIDEO PLAYER -->
+  <sc-if value="{{ videoId }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ bgVideo }}" style="position:fixed;inset:0;z-index:1200;background:rgba(2,2,2,.94);display:flex;align-items:center;justify-content:center;padding:4vh 20px">
+      <div style="width:min(960px,94vw);aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.9);background:#000">
+        <iframe src="https://www.youtube.com/embed/{{ videoId }}?autoplay=1&rel=0" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+      </div>
+      <button onClick="{{ closeVideo }}" style="position:fixed;top:24px;right:24px;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+  </sc-if>
+</section>
+
+<!-- ══ TATTOO AI MASTER TOOLS ══ -->
+<section id="tools" style="background:#080808;padding:64px 0;position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,.05)">
+  <!-- glow blob -->
+  <div style="position:absolute;bottom:-10%;right:-5%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(57,255,20,.05) 0%,transparent 65%);border-radius:50%;pointer-events:none"></div>
+  <!-- Samurai ghost texture — parallax left -->
+  <div class="par-el" data-par-speed="0.16" style="position:absolute;left:-4%;top:50%;transform:translateY(-50%);width:min(36vw,380px);pointer-events:none;opacity:0.09;mix-blend-mode:screen;z-index:0">
+    <img src="uploads/imagens/fundo%20(3).png" alt="" style="width:100%;height:auto;display:block">
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <!-- label -->
+    <div style="margin-bottom:28px" data-reveal>
+      <span style="background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.22);color:var(--c-green);font-size:10px;font-weight:900;letter-spacing:3px;padding:7px 18px;border-radius:100px;text-transform:uppercase">{{ toolsLabel }}</span>
+    </div>
+
+    <!-- LEFT (nome+logo+desc+whatsapp+como funciona) | RIGHT (shorts promocional) -->
+    <div class="tools-inner" style="display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap;margin-bottom:60px">
+      <div style="flex:1;min-width:300px" data-reveal>
+        <div style="width:min(38vw,160px);margin-bottom:22px;filter:drop-shadow(0 0 26px rgba(57,255,20,.35));animation:float 5.5s ease-in-out infinite">
+          <img src="uploads/logo%20tols.png" alt="Tattoo AI Master Tools" style="width:100%;height:auto;display:block">
+        </div>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(46px,7vw,92px);font-weight:900;letter-spacing:-3px;line-height:.88;color:#fff;margin-bottom:20px">
+          {{ toolsH1 }}<br>
+          <span style="background:linear-gradient(135deg,#39FF14,#00e055);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">{{ toolsH2 }}</span>
+        </h2>
+        <p style="font-size:17px;color:rgba(255,255,255,.52);line-height:1.75;margin-bottom:28px;max-width:520px">{{ toolsDesc }}</p>
+        <a href="{{ toolsLink }}" target="_blank" rel="noopener noreferrer" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#000;padding:16px 38px;border-radius:100px;font-size:16px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 32px rgba(37,211,102,.4)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          {{ toolsCta }}
+        </a>
+
+      </div>
+
+      <!-- RIGHT: short promocional + 3 vídeos pequenos (landscape) empilhados ao lado -->
+      <div class="tools-media" style="flex:none;display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;justify-content:center" data-reveal data-reveal-d="2">
+        <!-- Short promocional (toca sozinho) -->
+        <div style="flex:none;width:min(250px,80vw)">
+          <div style="position:relative;aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#0a0a0a;border:1px solid rgba(57,255,20,.28);box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 1px rgba(57,255,20,.18)">
+            <iframe src="https://www.youtube.com/embed/sLLfiw4YFNg?autoplay=1&mute=1&loop=1&playlist=sLLfiw4YFNg&controls=1&rel=0&playsinline=1&modestbranding=1" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+          </div>
+          <p style="text-align:center;font-size:12px;color:rgba(255,255,255,.3);margin-top:12px;letter-spacing:.5px">{{ toolsPromoLabel }}</p>
+        </div>
+        <!-- 3 vídeos "como funciona" pequenos, landscape, um abaixo do outro -->
+        <div style="flex:none;width:min(210px,80vw);display:flex;flex-direction:column;justify-content:center;gap:11px">
+          <span style="font-size:9px;font-weight:900;letter-spacing:2px;color:var(--c-green);text-transform:uppercase;margin-bottom:2px">{{ toolsVideosLabel }}</span>
+          <sc-for list="{{ toolsMoreVideos }}" as="tv" hint-placeholder-count="3">
+            <div onClick="{{ tv.play }}" class="vid-item" style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:pointer;background:#0a0a0a;border:1px solid rgba(255,255,255,.08)">
+              <img src="{{ tv.thumb }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);border:1px solid rgba(57,255,20,.4);display:flex;align-items:center;justify-content:center">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--c-green)"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature grid -->
+    <div class="tools-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:48px">
+      <sc-for list="{{ toolsFeatures }}" as="tf" hint-placeholder-count="4">
+        <div class="tools-feat" data-reveal data-reveal-d="{{ tf.d }}" style="background:#0d0d0d;border:1px solid rgba(57,255,20,.1);border-radius:22px;padding:30px 26px;cursor:default">
+          <div style="width:52px;height:52px;background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">{{ tf.icon }}</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.2px">{{ tf.title }}</h3>
+          <p style="font-size:13px;color:rgba(255,255,255,.4);line-height:1.65">{{ tf.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Valores sob consulta -->
+    <div data-reveal style="background:linear-gradient(135deg,rgba(57,255,20,.06),rgba(57,255,20,.02));border:1px solid rgba(57,255,20,.25);border-radius:22px;padding:40px 32px;text-align:center;margin-bottom:48px">
+      <h3 style="font-family:'Outfit',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:12px">{{ toolsPriceTitle }}</h3>
+      <p style="font-size:15px;color:rgba(255,255,255,.5);line-height:1.65;max-width:520px;margin:0 auto 26px">{{ toolsPriceSub }}</p>
+      <a href="{{ toolsLink }}" target="_blank" rel="noopener noreferrer" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#000;padding:16px 40px;border-radius:100px;font-size:16px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 32px rgba(37,211,102,.4)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        {{ toolsCta }}
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ CARROSEL DE ARTES 3D ══ -->
+<section style="background:#080808;padding:60px 0 70px;overflow:hidden;position:relative;border-top:1px solid rgba(255,255,255,.05)">
+  <!-- ambient parallax blob -->
+  <div class="par-el" data-par-speed="0.07" style="position:absolute;top:-15%;left:0%;width:100%;height:130%;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(57,255,20,.05) 0%,transparent 65%);pointer-events:none"></div>
+  <!-- Viking ghost texture — parallax right -->
+  <div class="par-el" data-par-speed="0.13" style="position:absolute;right:-5%;bottom:0%;width:min(32vw,340px);pointer-events:none;opacity:0.1;mix-blend-mode:screen;z-index:1">
+    <img src="uploads/imagens/soltas%20(1).png" alt="" style="width:100%;height:auto;display:block">
+  </div>
+
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:52px;text-align:center" data-reveal>
+      <h2 class="glitch" data-text="{{ carTitle }}" style="font-family:'Outfit',sans-serif;font-size:clamp(44px,7.5vw,96px);font-weight:900;letter-spacing:-3px;line-height:.88;color:#fff">{{ carTitle }}</h2>
+      <p style="margin-top:14px;font-size:15px;color:rgba(255,255,255,.35)">{{ carSub }}</p>
+    </div>
+  </div>
+
+  <!-- 3D Stage -->
+  <div data-carousel style="position:relative;height:580px;overflow:hidden">
+    <div style="position:absolute;inset:0;perspective:1600px">
+      <sc-for list="{{ carSlides }}" as="cs" hint-placeholder-count="5">
+        <div class="car3d-slide" onClick="{{ cs.open }}"
+             style="position:absolute;top:50%;left:50%;width:min(380px,72vw);
+                    transform:{{ cs.transform }};opacity:{{ cs.opacity }};z-index:{{ cs.zIndex }};
+                    border-radius:20px;overflow:hidden;cursor:{{ cs.cursor }};
+                    -webkit-box-reflect:{{ cs.reflect }};
+                    box-shadow:{{ cs.shadow }};border:1px solid {{ cs.border }}">
+          <div style="aspect-ratio:3/4;background:#0a0a0a">
+            <img src="{{ cs.src }}" alt="{{ cs.alt }}" loading="lazy"
+                 style="width:100%;height:100%;object-fit:cover;display:block">
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Arrows -->
+    <button onClick="{{ carPrev }}" class="btn-g" style="position:absolute;left:max(16px,calc(50% - 230px));top:50%;transform:translateY(-50%);z-index:200;width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button onClick="{{ carNext }}" class="btn-g" style="position:absolute;right:max(16px,calc(50% - 230px));top:50%;transform:translateY(-50%);z-index:200;width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- Counter -->
+  <div style="text-align:center;margin-top:24px">
+    <span style="font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.22);letter-spacing:3px">{{ carCounter }}</span>
+  </div>
+</section>
+
+<!-- ══ FOR WHOM ══ -->
+<section style="background:#080808;padding:64px 0;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px">
+    <div style="margin-bottom:64px" data-reveal>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(52px,9vw,120px);font-weight:900;letter-spacing:-3.5px;line-height:.92">
+        <span style="color:#fff">{{ forLine1 }} </span><span style="color:var(--c-green)">{{ forLine2 }}</span>
+      </h2>
+    </div>
+    <div class="whom-row" style="display:flex;gap:20px">
+      <sc-for list="{{ forWhom }}" as="fw" hint-placeholder-count="3">
+        <div class="card-h" data-reveal data-reveal-d="{{ fw.d }}" style="flex:1;background:#0d0d0d;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:36px 28px;cursor:default">
+          <div style="width:54px;height:54px;background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px">{{ fw.icon }}</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-bottom:10px;color:#fff;letter-spacing:-.3px">{{ fw.title }}</h3>
+          <p style="font-size:14px;color:rgba(255,255,255,.45);line-height:1.65">{{ fw.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section id="depoimentos" style="background:#060606;padding:80px 0 88px;position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,.05)">
+  <!-- scanline atmosphere -->
+  <div class="depo-scan" style="position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.5"></div>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;position:relative;z-index:1">
+    <div style="text-align:center;margin-bottom:16px" data-reveal>
+      <span style="background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.22);color:var(--c-green);font-size:10px;font-weight:900;letter-spacing:3px;padding:7px 18px;border-radius:100px;text-transform:uppercase">{{ depoBadge }}</span>
+    </div>
+    <div style="text-align:center;margin-bottom:14px" data-reveal>
+      <h2 class="glitch" data-text="{{ depoTitle }}" style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,108px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#fff">{{ depoTitle }}</h2>
+    </div>
+    <p style="text-align:center;font-size:16px;color:rgba(255,255,255,.4);margin-bottom:48px" data-reveal data-reveal-d="1">{{ depoSub }}</p>
+  </div>
+
+  <!-- Marquee infinito de prints reais -->
+  <div class="depo-marquee" style="position:relative;z-index:1">
+    <div class="depo-track">
+      <sc-for list="{{ depoShots }}" as="ds" hint-placeholder-count="6">
+        <figure class="depo-card">
+          <img src="{{ ds.src }}" alt="{{ ds.name }}" loading="lazy">
+          <figcaption>
+            <span class="depo-stars">★★★★★</span>
+            <span class="depo-name">{{ ds.name }}</span>
+          </figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- edge fades -->
+  <div style="position:absolute;top:0;left:0;width:120px;height:100%;background:linear-gradient(90deg,#060606,transparent);z-index:2;pointer-events:none"></div>
+  <div style="position:absolute;top:0;right:0;width:120px;height:100%;background:linear-gradient(270deg,#060606,transparent);z-index:2;pointer-events:none"></div>
+</section>
+
+<!-- ══ COMMUNITY ══ -->
+<section style="background:var(--c-green);padding:64px 0;overflow:hidden;position:relative">
+  <div style="position:absolute;right:-5%;top:-30%;width:50vw;height:50vw;background:rgba(0,0,0,.07);border-radius:50%;pointer-events:none"></div>
+  <div class="par-el" data-par-speed="0.12" style="position:absolute;left:-4%;bottom:-15%;width:min(35vw,380px);pointer-events:none;opacity:0.12;mix-blend-mode:multiply;z-index:0">
+    <img src="uploads/imagens/soltas%20(2).png" alt="" style="width:100%;height:auto;display:block">
+  </div>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;gap:64px;align-items:center;flex-wrap:wrap;position:relative">
+    <div style="flex:1;min-width:280px">
+      <div style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,100px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#000">
+        {{ commLine1 }}<br><span style="color:rgba(0,0,0,.65)">{{ commLine2 }}</span>
+      </div>
+    </div>
+    <div style="flex:none;max-width:440px">
+      <p style="font-size:17px;color:rgba(0,0,0,.7);line-height:1.7;margin-bottom:28px;font-weight:500">{{ commDesc }}</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <a href="{{ commDiscordLink }}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:9px;background:#000;color:var(--c-green);padding:15px 32px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.211.375-.444.865-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.369a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.009c.12.099.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.891.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.028zM8.02 15.331c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.211 0 2.176 1.096 2.157 2.42 0 1.332-.955 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.211 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg>
+          {{ commJoinLabel }}
+        </a>
+        <a href="#depoimentos" style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,.1);border:2px solid rgba(0,0,0,.25);color:#000;padding:15px 28px;border-radius:100px;font-size:15px;font-weight:800;font-family:'Inter',sans-serif">{{ commSeeResults }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PACKS DE IMAGENS ══ -->
+<section id="packs" style="background:#060606;padding:72px 0 84px;position:relative;overflow:hidden;border-top:1px solid rgba(255,255,255,.05)">
+  <!-- ambient glow -->
+  <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:80vw;height:60vh;background:radial-gradient(ellipse 50% 60% at 50% 0%,rgba(57,255,20,.05) 0%,transparent 65%);pointer-events:none;z-index:0"></div>
+  <div style="max-width:1200px;margin:0 auto;padding:0 32px;position:relative;z-index:1">
+    <div style="text-align:center;margin-bottom:16px" data-reveal>
+      <span style="background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.22);color:var(--c-green);font-size:10px;font-weight:900;letter-spacing:3px;padding:7px 18px;border-radius:100px;text-transform:uppercase">{{ packsLabel }}</span>
+    </div>
+    <div style="text-align:center;margin-bottom:12px" data-reveal>
+      <h2 class="glitch" data-text="{{ packsTitle }}" style="font-family:'Outfit',sans-serif;font-size:clamp(44px,8vw,104px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#fff">{{ packsTitle }}</h2>
+    </div>
+    <p style="text-align:center;font-size:16px;color:rgba(255,255,255,.4);max-width:640px;margin:0 auto 52px" data-reveal data-reveal-d="1">{{ packsSub }}</p>
+
+    <div class="packs-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <sc-for list="{{ packs }}" as="pk" hint-placeholder-count="2">
+        <div class="pack-card" data-reveal data-reveal-d="{{ pk.d }}" style="position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(57,255,20,.15);background:#0a0a0a">
+          <div style="position:relative;overflow:hidden">
+            <img src="{{ pk.img }}" alt="{{ pk.name }}" class="pack-img" loading="lazy" style="width:100%;height:auto;display:block">
+            <div style="position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);border:1px solid rgba(57,255,20,.3);color:var(--c-green);font-size:11px;font-weight:900;letter-spacing:1px;padding:7px 13px;border-radius:100px">{{ pk.count }}</div>
+          </div>
+          <div style="padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px">
+            <div>
+              <h3 style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.5px;color:#fff;line-height:1.05;margin-bottom:6px">{{ pk.name }}</h3>
+              <p style="font-size:13px;color:rgba(255,255,255,.4);line-height:1.55">{{ pk.desc }}</p>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+              <div>
+                <span style="font-family:'Outfit',sans-serif;font-size:32px;font-weight:900;color:var(--c-green);letter-spacing:-1px;line-height:1">{{ pk.price }}</span>
+                <span style="font-size:11px;color:rgba(255,255,255,.3);font-weight:500;margin-left:6px">{{ pk.priceNote }}</span>
+              </div>
+              <a href="{{ pk.buyUrl }}" target="_blank" rel="noopener noreferrer" class="btn-g" style="display:inline-flex;align-items:center;gap:8px;background:var(--c-green);color:#000;padding:13px 28px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 24px var(--c-glow)">
+                {{ packsBuyCta }}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GUARANTEE ══ -->
+<section style="background:#080808;border-top:1px solid rgba(57,255,20,.1);padding:64px 0;overflow:hidden">
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:60px;flex-wrap:wrap" data-reveal>
+    <div style="flex:none"><div style="font-size:100px;line-height:1">🛡️</div></div>
+    <div style="flex:1;min-width:280px">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:900;letter-spacing:-2.5px;line-height:.95;color:#fff;margin-bottom:18px">{{ guarTitle }}</h2>
+      <p style="font-size:17px;color:rgba(255,255,255,.5);line-height:1.7;max-width:580px">{{ guarText }}</p>
+    </div>
+    <div style="flex:none">
+      <a href="#cursos" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:var(--c-green);color:#000;padding:16px 36px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 28px rgba(57,255,20,.4)">{{ heroCta }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INSTRUCTOR ══ -->
+<section style="background:#f2f2f2;padding:64px 0">
+  <div style="max-width:1000px;margin:0 auto;padding:0 32px;text-align:center" data-reveal>
+    <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 24px;border:3px solid rgba(57,255,20,.4);box-shadow:0 0 32px rgba(57,255,20,.2)">
+      <img src="uploads/imagens/eu.png" alt="Willian Ludgero" style="width:100%;height:100%;object-fit:cover;object-position:top center">
+    </div>
+    <div style="display:inline-block;background:#0a0a0a;border-radius:100px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:10px;font-weight:800;color:var(--c-green);letter-spacing:2px;text-transform:uppercase">{{ instructorLabel }}</span>
+    </div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;color:#0a0a0a">{{ instructorName }}</h2>
+    <p style="font-size:17px;color:rgba(0,0,0,.55);line-height:1.75;max-width:660px;margin:0 auto">{{ instructorBio }}</p>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer style="background:var(--c-green);padding:72px 0 40px;overflow:hidden;position:relative">
+  <div style="position:absolute;top:-10%;right:-5%;width:40vw;height:40vw;background:rgba(0,0,0,.05);border-radius:50%;pointer-events:none"></div>
+  <div style="max-width:1400px;margin:0 auto;padding:0 32px;position:relative">
+    <div style="overflow:hidden;margin-bottom:48px">
+      <div style="font-family:'Outfit',sans-serif;font-size:clamp(60px,12vw,160px);font-weight:900;letter-spacing:-5px;line-height:.85;color:rgba(0,0,0,.15);white-space:nowrap;user-select:none">TATTOO AI MASTER</div>
+    </div>
+    <div class="footer-inner" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;border-top:1px solid rgba(0,0,0,.15);padding-top:28px">
+      <img src="uploads/logo%20tols.png" alt="Tattoo AI Master" style="height:44px;width:auto;object-fit:contain;filter:brightness(0)">
+      <p style="font-size:13px;color:rgba(0,0,0,.5);font-weight:500">{{ footerRights }}</p>
+      <div style="display:flex;gap:24px">
+        <sc-for list="{{ footerLinks }}" as="fl" hint-placeholder-count="3">
+          <a href="#" class="lnk" style="font-size:13px;color:rgba(0,0,0,.55);font-weight:600;transition:color .2s">{{ fl }}</a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CAROUSEL_TOTAL = 70;
+
+class Component extends DCLogic {
+  state = { lang: 'pt', expandedId: null, zoomImg: null, videoId: null, carouselIdx: 0, moreVideos: false };
+
+  componentDidMount() {
+    // Frosted navbar
+    const nav = document.querySelector('[data-nav]');
+    if (nav) {
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      }, { passive: true });
+    }
+
+    // ESC key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.setState({ expandedId: null, zoomImg: null, videoId: null });
+    });
+
+    // Scroll progress bar
+    const bar = document.getElementById('scroll-bar');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        if (max > 0) bar.style.width = ((window.scrollY / max) * 100) + '%';
+      }, { passive: true });
+    }
+
+    // Mobile sticky CTA — aparece quando o hero sai da viewport
+    const stickyCta = document.getElementById('sticky-cta');
+    const hero = document.querySelector('[data-hero]');
+    if (stickyCta && hero) {
+      const heroIO = new IntersectionObserver(([entry]) => {
+        stickyCta.style.transform = entry.isIntersecting ? 'translateY(100%)' : 'translateY(0)';
+      }, { threshold: 0 });
+      heroIO.observe(hero);
+    }
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => revealIO.observe(el));
+
+    // Parallax
+    const parEls = document.querySelectorAll('[data-par-speed]');
+    if (parEls.length) {
+      window.addEventListener('scroll', () => {
+        const vh = window.innerHeight;
+        parEls.forEach(el => {
+          const speed = parseFloat(el.getAttribute('data-par-speed')) || 0.1;
+          const rect = el.getBoundingClientRect();
+          const fromCenter = (rect.top + rect.height / 2) - vh / 2;
+          el.style.transform = `translateY(${fromCenter * speed * -0.6}px)`;
+        });
+      }, { passive: true });
+    }
+
+    // Carousel autoplay
+    this._startCarousel();
+
+    // Carousel touch swipe
+    const car = document.querySelector('[data-carousel]');
+    if (car) {
+      let tx = 0;
+      car.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+      car.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 44) {
+          this.setState(s => ({
+            carouselIdx: dx > 0
+              ? (s.carouselIdx - 1 + CAROUSEL_TOTAL) % CAROUSEL_TOTAL
+              : (s.carouselIdx + 1) % CAROUSEL_TOTAL
+          }));
+        }
+      }, { passive: true });
+      car.addEventListener('mouseenter', () => { clearInterval(this._carTimer); });
+      car.addEventListener('mouseleave', () => { this._startCarousel(); });
+    }
+
+    // FX Engine — neon ink layer
+    this._initFX();
+  }
+
+  _initFX() {
+    if (this._fxOn || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const FINE = matchMedia('(pointer: fine)').matches;
+    const cv = document.getElementById('fx-canvas');
+    if (!cv) return;
+    this._fxOn = true;
+
+    const cx = cv.getContext('2d');
+    const DPR = Math.min(devicePixelRatio || 1, 1.5);
+    let W = 0, H = 0;
+    const resize = () => {
+      W = innerWidth; H = innerHeight;
+      cv.width = W * DPR; cv.height = H * DPR;
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    };
+    resize();
+    addEventListener('resize', resize);
+
+    // Sprite de brilho pré-renderizado (rápido — sem shadowBlur no loop)
+    const makeGlow = (size, r, g, b) => {
+      const s = document.createElement('canvas');
+      s.width = s.height = size;
+      const g2 = s.getContext('2d');
+      const grd = g2.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+      grd.addColorStop(0, `rgba(${r},${g},${b},1)`);
+      grd.addColorStop(0.25, `rgba(${r},${g},${b},.55)`);
+      grd.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      g2.fillStyle = grd;
+      g2.fillRect(0, 0, size, size);
+      return s;
+    };
+    const glowG = makeGlow(64, 57, 255, 20);
+    const glowW = makeGlow(64, 190, 255, 170);
+
+    // Brasas ambiente
+    const embers = Array.from({ length: FINE ? 55 : 24 }, () => ({
+      x: Math.random() * 2000, y: Math.random() * 1200,
+      r: 0.8 + Math.random() * 2.4,
+      vy: 0.12 + Math.random() * 0.35,
+      ph: Math.random() * Math.PI * 2,
+      sp: 0.004 + Math.random() * 0.008,
+      a: 0.25 + Math.random() * 0.5,
+    }));
+
+    const trail = [], burst = [], rings = [];
+    let mx = -999, my = -999, pmx = -999, pmy = -999;
+
+    if (FINE) {
+      addEventListener('pointermove', (e) => {
+        mx = e.clientX; my = e.clientY;
+        const dx = mx - pmx, dy = my - pmy;
+        if (Math.sqrt(dx * dx + dy * dy) > 6 && trail.length < 90) {
+          trail.push({
+            x: mx + (Math.random() - .5) * 8, y: my + (Math.random() - .5) * 8,
+            vx: -dx * 0.02 + (Math.random() - .5) * .4,
+            vy: -dy * 0.02 + (Math.random() - .5) * .4,
+            r: 2 + Math.random() * 5, life: 1,
+          });
+          pmx = mx; pmy = my;
+        }
+        if (pmx < -900) { pmx = mx; pmy = my; }
+      }, { passive: true });
+    }
+
+    // Explosão de tinta neon no clique
+    addEventListener('pointerdown', (e) => {
+      for (let i = 0; i < 16; i++) {
+        const ang = (i / 16) * Math.PI * 2 + Math.random() * .5;
+        const sp = 1.6 + Math.random() * 3.4;
+        burst.push({
+          x: e.clientX, y: e.clientY,
+          vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - .8,
+          r: 1.4 + Math.random() * 3, life: 1,
+        });
+      }
+      rings.push({ x: e.clientX, y: e.clientY, r: 4, life: 1 });
+    }, { passive: true });
+
+    const drawGlow = (img, x, y, r, a) => {
+      cx.globalAlpha = a;
+      cx.drawImage(img, x - r * 2, y - r * 2, r * 4, r * 4);
+    };
+
+    const frame = () => {
+      requestAnimationFrame(frame);
+      if (document.hidden) return;
+      cx.clearRect(0, 0, W, H);
+      cx.globalCompositeOperation = 'lighter';
+
+      for (const p of embers) {
+        p.ph += p.sp; p.y -= p.vy; p.x += Math.sin(p.ph) * .3;
+        if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
+        if (p.x > W + 20) p.x = -20;
+        const tw = .55 + Math.sin(p.ph * 3) * .45;
+        drawGlow(glowG, p.x, p.y % (H + 40), p.r, p.a * tw * .5);
+      }
+      for (let i = trail.length - 1; i >= 0; i--) {
+        const t = trail[i];
+        t.life -= .022; t.x += t.vx; t.y += t.vy; t.r *= .985;
+        if (t.life <= 0) { trail.splice(i, 1); continue; }
+        drawGlow(glowG, t.x, t.y, t.r, t.life * .5);
+        drawGlow(glowW, t.x, t.y, t.r * .4, t.life * .35);
+      }
+      for (let i = burst.length - 1; i >= 0; i--) {
+        const b = burst[i];
+        b.life -= .018; b.x += b.vx; b.y += b.vy; b.vy += .05; b.vx *= .985;
+        if (b.life <= 0) { burst.splice(i, 1); continue; }
+        drawGlow(glowG, b.x, b.y, b.r, b.life * .85);
+        drawGlow(glowW, b.x, b.y, b.r * .45, b.life * .55);
+      }
+      cx.globalAlpha = 1;
+      for (let i = rings.length - 1; i >= 0; i--) {
+        const rg = rings[i];
+        rg.life -= .035; rg.r += 3.2;
+        if (rg.life <= 0) { rings.splice(i, 1); continue; }
+        cx.beginPath();
+        cx.arc(rg.x, rg.y, rg.r, 0, Math.PI * 2);
+        cx.strokeStyle = `rgba(57,255,20,${rg.life * .5})`;
+        cx.lineWidth = 1.6;
+        cx.stroke();
+      }
+      cx.globalCompositeOperation = 'source-over';
+    };
+    frame();
+
+    if (!FINE) return;
+
+    // Cursor aura
+    const dot = document.getElementById('fx-dot');
+    const ring = document.getElementById('fx-ring');
+    let rx = 0, ry = 0, seen = false;
+    addEventListener('pointermove', (e) => {
+      if (!seen) { seen = true; rx = e.clientX; ry = e.clientY; dot.style.opacity = ring.style.opacity = 1; }
+      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+      const hot = e.target && e.target.closest &&
+        e.target.closest('a,button,.course-card,.gal-item,.car3d-slide,.tools-feat,.btn-g');
+      ring.classList.toggle('fx-hot', !!hot);
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => { dot.style.opacity = ring.style.opacity = 0; });
+    document.addEventListener('mouseenter', () => { if (seen) dot.style.opacity = ring.style.opacity = 1; });
+    const lerpRing = () => {
+      requestAnimationFrame(lerpRing);
+      rx += (mx - rx) * .16; ry += (my - ry) * .16;
+      if (mx > -900) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; }
+    };
+    lerpRing();
+
+    // Tilt 3D + glare nos cards (delegado — sobrevive re-render do framework)
+    const TILT_SEL = '.course-card,.tools-feat';
+    document.addEventListener('mousemove', (e) => {
+      const card = e.target.closest && e.target.closest(TILT_SEL);
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const lift = card.classList.contains('course-card') ? -8 : -5;
+      card.style.transform =
+        `perspective(950px) translateY(${lift}px) rotateX(${((0.5 - py) * 7).toFixed(2)}deg) rotateY(${((px - 0.5) * 9).toFixed(2)}deg)`;
+      card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+    }, { passive: true });
+    document.addEventListener('mouseout', (e) => {
+      const card = e.target.closest && e.target.closest(TILT_SEL);
+      if (card && !(e.relatedTarget && card.contains(e.relatedTarget))) card.style.transform = '';
+    }, { passive: true });
+
+    // Botões magnéticos
+    document.addEventListener('mousemove', (e) => {
+      const btn = e.target.closest && e.target.closest('.btn-g');
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+      const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+      btn.style.transform = `translate(${(dx * 7).toFixed(1)}px,${(dy * 5 - 3).toFixed(1)}px) scale(1.03)`;
+    }, { passive: true });
+    document.addEventListener('mouseout', (e) => {
+      const btn = e.target.closest && e.target.closest('.btn-g');
+      if (btn && !(e.relatedTarget && btn.contains(e.relatedTarget))) btn.style.transform = '';
+    }, { passive: true });
+
+    // Glitch rápido nas capas de curso ao entrar o mouse
+    document.addEventListener('mouseover', (e) => {
+      const img = e.target.closest && e.target.closest('.course-card .cover-img, .car3d-slide');
+      if (!img || img._gl) return;
+      img._gl = 1;
+      img.classList.add('fx-glitching');
+      setTimeout(() => { img.classList.remove('fx-glitching'); img._gl = 0; }, 640);
+    }, { passive: true });
+
+    // Fitas de glitch que cortam a tela de tempos em tempos
+    const glBar = () => {
+      const bar = document.createElement('div');
+      bar.className = 'glitch-bar';
+      bar.style.top = (Math.random() * 100) + 'vh';
+      bar.style.height = (1 + Math.random() * 3) + 'px';
+      document.body.appendChild(bar);
+      let x = 0;
+      const anim = () => {
+        x += 0.08;
+        const o = Math.sin(x * Math.PI) ;
+        bar.style.opacity = o < 0 ? 0 : o;
+        bar.style.transform = `translateX(${(Math.random() - 0.5) * 12}px)`;
+        if (x < 1) requestAnimationFrame(anim);
+        else bar.remove();
+      };
+      anim();
+    };
+    const glLoop = () => {
+      glBar();
+      setTimeout(glLoop, 4500 + Math.random() * 6000);
+    };
+    setTimeout(glLoop, 3000);
+  }
+
+  _startCarousel() {
+    clearInterval(this._carTimer);
+    this._carTimer = setInterval(() => {
+      this.setState(s => ({ carouselIdx: (s.carouselIdx + 1) % CAROUSEL_TOTAL }));
+    }, 4500);
+  }
+
+  t(pt, en) { return this.state.lang === 'pt' ? pt : en; }
+
+  renderVals() {
+    const t = (pt, en) => this.t(pt, en);
+    const { lang, expandedId, zoomImg, videoId, carouselIdx, moreVideos } = this.state;
+
+    // ── Gallery + video builders ──
+    const gallery = (dir, count, ext) => Array.from({ length: count || 6 }, (_, i) => {
+      const src = 'uploads/gallery/' + dir + '/' + (i + 1) + '.' + (ext || 'png');
+      return { src, open: () => this.setState({ zoomImg: src }) };
+    });
+
+    // Cole os IDs dos vídeos do YouTube aqui (só o código depois de v=... ou youtu.be/...).
+    const VIDEO_IDS = {
+      mj:   [],
+      grok: [],
+      fx:   [],
+    };
+    const videosFor = (key) => {
+      const ids = VIDEO_IDS[key] || [];
+      const list = ids.map((id) => ({ id, play: () => this.setState({ videoId: id }) }));
+      while (list.length < 2) list.push({ empty: true });
+      return list;
+    };
+
+    // ── Links de checkout — substitua pelos seus links reais ──
+    const BUY_URLS = {
+      mj:   t('https://pay.kiwify.com.br/zCbYoOm', 'https://pay.hotmart.com/V94945135R'),
+      grok: t('https://pay.kiwify.com.br/uxuJIhc', 'https://pay.hotmart.com/N105059158L?bid=1784383500923'),
+      fx:   t('https://pay.kiwify.com.br/aUGbqAt', 'https://go.hotmart.com/K101971028J'),
+    };
+
+    // ── Link do Tattoo AI Master Tools — substitua pelo link real ──
+    const TOOLS_LINK = '#';
+
+    // ── Course definitions ──
+    const COURSES = {
+      mj: {
+        accent:'#1a6eff', glow:'rgba(26,110,255,.35)', soft:'rgba(26,110,255,.14)',
+        softer:'rgba(26,110,255,.06)', border:'rgba(26,110,255,.25)',
+        label:'MIDJOURNEY', cover:'uploads/midjourney.png',
+        name:'Tattoo AI Master MIDJOURNEY',
+        sub: t('Curso profissional de IA para tatuadores via Discord.','Professional AI course for tattoo artists via Discord.'),
+        fullSub: t('Curso Profissional de IA para Tatuadores','Professional AI Course for Tattoo Artists'),
+        features: [
+          t('Aprenda MidJourney via Discord','Learn MidJourney via Discord'),
+          t('Estrutura Profissional de Prompts','Professional Prompt Structure'),
+          'SREF & Character Reference',
+          t('Remix & Variações','Remix & Variations'),
+          t('Crie Designs Profissionais de Tatuagem','Create Professional Tattoo Designs'),
+        ],
+        reqIcon:'ℹ️', req: t('Requer Assinatura do MidJourney','Requires MidJourney Subscription'),
+        bonuses:[
+          { icon:'📘', text: t('2 Guias de Prompts','2 Prompt Guides') },
+          { icon:'🎥', text: t('Curso Completo em Vídeo','Complete Video Course') },
+        ],
+        mods:[
+          { n:'01', title: t('Setup Discord + MidJourney','Discord + MidJourney Setup'), desc: t('Crie sua conta e configure tudo do zero gratuitamente.','Create your account and set everything up for free.') },
+          { n:'02', title: t('Engenharia de Prompts','Prompt Engineering'), desc: t('Estrutura profissional para tatuagem em qualquer estilo.','Professional structure for tattoos in any style.') },
+          { n:'03', title: t('Parâmetros Avançados','Advanced Parameters'), desc: t('Seeds, aspect ratio, stylize, quality e muito mais.','Seeds, aspect ratio, stylize, quality and much more.') },
+          { n:'04', title:'SREF & Character Reference', desc: t('Consistência visual e referências entre gerações.','Visual consistency and references across generations.') },
+          { n:'05', title: t('Remix & Variações','Remix & Variations'), desc: t('Edite e refine seus designs com precisão total.','Edit and refine your designs with total precision.') },
+          { n:'06', title: t('Upscale & Stencil Final','Upscale & Final Stencil'), desc: t('Prepare designs em alta resolução prontos para tatuar.','Prepare high-resolution designs ready to tattoo.') },
+        ],
+        price: t('R$ 89','$39'), priceNote: t('pagamento único','one-time'),
+        gallery: gallery('mj'), videos: videosFor('mj'), buyUrl: BUY_URLS.mj,
+      },
+      grok: {
+        accent:'#e60023', glow:'rgba(230,0,35,.35)', soft:'rgba(230,0,35,.14)',
+        softer:'rgba(230,0,35,.06)', border:'rgba(230,0,35,.25)',
+        label:'GROK', cover:'uploads/grok.png',
+        name:'Tattoo AI Master GROK',
+        sub: t('Workflow profissional de IA com stencils limpos.','Professional AI workflow with clean stencils.'),
+        fullSub: t('Workflow Profissional de IA para Tatuadores','Professional AI Workflow for Tattoo Artists'),
+        features: [
+          t('Crie Prompts Profissionais','Create Professional Prompts'),
+          t('Gere Stencils Limpos','Generate Clean Stencils'),
+          t('Edição de Imagens com IA','AI Image Editing'),
+          t('Use Imagens de Referência','Use Reference Images'),
+        ],
+        reqIcon:'ℹ️', req: t('Requer Assinatura do Grok','Requires Grok Subscription'),
+        bonuses:[
+          { icon:'📱', text: t('App Exclusivo de Prompts','Exclusive Prompt App') },
+          { icon:'📘', text: t('Guia de Prompts','Prompt Guide') },
+          { icon:'🎥', text: t('Curso Completo em Vídeo','Complete Video Course') },
+        ],
+        mods:[
+          { n:'01', title: t('Configuração do Grok','Grok Setup'), desc: t('Acesso, conta e navegação pela plataforma.','Access, account and platform navigation.') },
+          { n:'02', title: t('Prompts para Tatuagem','Tattoo Prompts'), desc: t('Estrutura, estilos e resultados profissionais.','Structure, styles and professional results.') },
+          { n:'03', title: t('Stencils Limpos','Clean Stencils'), desc: t('Extraia linhas e prepare designs para tatuar.','Extract lines and prepare designs to tattoo.') },
+          { n:'04', title: t('Edição com IA','AI Editing'), desc: t('Ajustes, combinações e remixes de designs.','Adjustments, combinations and design remixes.') },
+          { n:'05', title: t('Referências Visuais','Visual References'), desc: t('Use fotos reais como base para novos designs.','Use real photos as base for new designs.') },
+          { n:'06', title: t('Workflow Profissional','Professional Workflow'), desc: t('Do briefing do cliente ao stencil final.','From client briefing to final stencil.') },
+        ],
+        price: t('R$ 299','$59'), priceNote: t('pagamento único','one-time'),
+        gallery: gallery('grok', 7, 'jpg'), videos: videosFor('grok'), buyUrl: BUY_URLS.grok,
+      },
+      fx: {
+        accent:'#39FF14', glow:'rgba(57,255,20,.4)', soft:'rgba(57,255,20,.1)',
+        softer:'rgba(57,255,20,.05)', border:'rgba(57,255,20,.2)',
+        label:'FX', cover:'uploads/fx.png',
+        name:'Tattoo AI Master FX',
+        sub: t('Criação ilimitada de tatuagens com IA 100% gratuita.','Unlimited tattoo creation with 100% free AI.'),
+        fullSub: t('IA Própria · 100% Gratuita · Sem Mensalidades','Proprietary AI · 100% Free · No Monthly Fees'),
+        features: [
+          t('Arte IA Ilimitada','Unlimited AI Artwork'),
+          t('App Exclusivo FX','Exclusive FX App'),
+          t('Guia de Prompts com 200+ Páginas','200+ Page Prompt Guide'),
+          t('Prompts Profissionais para Tatuagem','Professional Tattoo Prompts'),
+          t('Curso Completo em Vídeo','Complete Video Course'),
+        ],
+        reqIcon:'✅', req: t('IA Própria · Sem Mensalidades · Gerações Ilimitadas','Proprietary AI · No Monthly Fees · Unlimited Generations'),
+        bonuses:[
+          { icon:'🎥', text: t('Curso Completo em Vídeo','Complete Video Course') },
+        ],
+        mods:[
+          { n:'01', title:'Tattoo AI Master FX App', desc: t('O app exclusivo — acesso, navegação e primeiros designs.','The exclusive app — access, navigation and first designs.') },
+          { n:'02', title: t('IA Própria Sem Limites','Proprietary AI Without Limits'), desc: t('Tecnologia exclusiva com gerações ilimitadas e 100% gratuita.','Exclusive technology with unlimited generations, 100% free.') },
+          { n:'03', title: t('200+ Prompts Prontos','200+ Ready Prompts'), desc: t('Biblioteca completa de prompts testados por estilo.','Complete library of tested prompts by style.') },
+          { n:'04', title: t('Todos os Estilos','All Styles'), desc: t('Blackwork, realismo, aquarela, geométrico, japonês.','Blackwork, realism, watercolor, geometric, Japanese.') },
+          { n:'05', title: t('Workflow Completo','Full Workflow'), desc: t('Do briefing do cliente ao design final em IA.','From client briefing to final AI design.') },
+          { n:'06', title: t('Portfólio com IA','AI Portfolio'), desc: t('Use suas artes de IA para atrair mais clientes.','Use your AI art to attract more clients.') },
+        ],
+        price: t('R$ 89','$39'), priceNote: t('pagamento único','one-time'),
+        gallery: gallery('fx', 6, 'jpg'), videos: videosFor('fx'), buyUrl: BUY_URLS.fx,
+      },
+    };
+
+    const order = ['mj', 'grok', 'fx'];
+    const revealDs = ['1', '2', '3'];
+    const courseCards = order.map((key, idx) => {
+      const c = COURSES[key];
+      return {
+        open: () => this.setState({ expandedId: key }),
+        cover: c.cover, name: c.name, sub: c.sub, accent: c.accent, label: c.label,
+        price: c.price, priceNote: c.priceNote,
+        galleryCount: c.gallery.length + ' ' + t('artes', 'arts'),
+        revealD: revealDs[idx],
+      };
+    });
+    const mc = expandedId ? COURSES[expandedId] : {};
+
+    // ── 3D Carousel ──
+    const carSlides = [
+      ...Array.from({ length: CAROUSEL_TOTAL }, (_, i) => ({ src: 'uploads/carousel/' + (i + 1) + '.jpg', alt: 'Arte ' + (i + 1), idx: i })),
+    ].map((slide) => {
+      let off = slide.idx - carouselIdx;
+      if (off >  CAROUSEL_TOTAL / 2) off -= CAROUSEL_TOTAL;
+      if (off < -CAROUSEL_TOTAL / 2) off += CAROUSEL_TOTAL;
+      const abs = Math.abs(off);
+      let tx, scale, ry, op, zi, shadow, border;
+      if (abs === 0) {
+        tx = 0; scale = 1; ry = 0; op = 1; zi = 10;
+        shadow = '0 28px 80px rgba(0,0,0,.75), 0 0 0 2px rgba(57,255,20,.35)';
+        border = 'rgba(57,255,20,.4)';
+      } else if (abs === 1) {
+        tx = off > 0 ? 310 : -310; scale = 0.74; ry = off > 0 ? -38 : 38;
+        op = 0.65; zi = 7;
+        shadow = '0 16px 48px rgba(0,0,0,.55)';
+        border = 'rgba(255,255,255,.07)';
+      } else if (abs === 2) {
+        tx = off > 0 ? 530 : -530; scale = 0.52; ry = off > 0 ? -56 : 56;
+        op = 0.3; zi = 4;
+        shadow = '0 8px 24px rgba(0,0,0,.4)';
+        border = 'rgba(255,255,255,.04)';
+      } else {
+        tx = off > 0 ? 680 : -680; scale = 0.34; ry = off > 0 ? -68 : 68;
+        op = 0; zi = 1; shadow = 'none'; border = 'transparent';
+      }
+      const transform = `translate(calc(-50% + ${tx}px), -50%) scale(${scale}) rotateY(${ry}deg)`;
+      const isrc = slide.src; const iidx = slide.idx;
+      return {
+        src: isrc, alt: slide.alt, transform,
+        reflect: abs <= 2 ? 'below 14px linear-gradient(transparent 62%,rgba(255,255,255,.16))' : 'none',
+        opacity: String(op), zIndex: String(zi), shadow, border,
+        cursor: abs === 0 ? 'zoom-in' : (abs <= 2 ? 'pointer' : 'default'),
+        open: abs === 0
+          ? () => this.setState({ zoomImg: isrc })
+          : () => this.setState({ carouselIdx: iidx }),
+      };
+    });
+
+    return {
+      lang,
+      langLabel: lang === 'pt' ? 'EN' : 'PT',
+      toggleLang: () => this.setState(s => ({ lang: s.lang === 'pt' ? 'en' : 'pt' })),
+
+      navCta:    t('Começar Agora', 'Get Started'),
+      cursosNavLabel: t('Cursos', 'Courses'),
+      toolsNavLabel:  t('Ferramenta', 'Tools'),
+
+      badge:   t('O 1º Curso de IA para Tatuadores', 'The 1st AI Course for Tattoo Artists'),
+      heroDesc:t('Aprenda a usar MidJourney, ChatGPT e Inteligência Artificial para criar artes profissionais de tatuagem — sem saber desenhar.', 'Learn to use MidJourney, ChatGPT and AI to create professional tattoo art — no drawing skills needed.'),
+      heroCta: t('Quero Acessar o Curso', 'Access the Course'),
+      heroVerCursos: t('Ver Cursos', 'See Courses'),
+
+      stats: [
+        { n:'2.000+', l: t('Alunos','Students') },
+        { n:'50K+',   l: t('Artes Geradas','Arts Generated') },
+        { n:'4.9★',   l: t('Avaliação','Rating') },
+        { n:'VIP',    l: t('Comunidade','Community') },
+      ],
+
+      // ── Cursos ──
+      coursesTitle: t('NOSSOS CURSOS','OUR COURSES'),
+      coursesSub:   t('Escolha o curso ideal para o seu workflow — clique para ver tudo','Choose the right course for your workflow — click to see everything'),
+      courseCards, mc,
+      modalOpen: !!expandedId,
+      zoomImg, videoId,
+      closeCourse: () => this.setState({ expandedId: null, zoomImg: null, videoId: null }),
+      closeZoom:   () => this.setState({ zoomImg: null }),
+      closeVideo:  () => this.setState({ videoId: null }),
+      bgCourse: (e) => { if (e.target === e.currentTarget) this.setState({ expandedId: null, zoomImg: null, videoId: null }); },
+      bgVideo:  (e) => { if (e.target === e.currentTarget) this.setState({ videoId: null }); },
+      galleryTitle:  t('Artes criadas no curso','Art created in this course'),
+      gallerySub:    t('clique para ampliar','click to enlarge'),
+      videosTitle:   t('Vídeos','Videos'),
+      videosSub:     t('aulas e demonstrações','lessons & demos'),
+      addVideoLabel: t('Adicionar vídeo','Add video'),
+      modsLabel:     t('MÓDULOS DO CURSO','COURSE MODULES'),
+      whatLabel:     t('O que você vai aprender',"What you'll learn"),
+      bonusLabel:    t('BÔNUS EXCLUSIVOS','EXCLUSIVE BONUSES'),
+      buyLabel:      t('Comprar Agora','Buy Now'),
+      seeDetails:    t('Ver detalhes','View details'),
+
+      // ── Tools ──
+      toolsLabel: t('A PLATAFORMA COMPLETA PARA O TATUADOR MODERNO','THE COMPLETE PLATFORM FOR THE MODERN TATTOO ARTIST'),
+      toolsH1:    t('TATTOO AI','TATTOO AI'),
+      toolsH2:    t('MASTER TOOLS','MASTER TOOLS'),
+      toolsDesc:  t('Pare de perder horas procurando referências. A plataforma criada por Willian Ludgero gera 4 opções ultra-realistas em ~10 segundos, converte qualquer arte em stencil HD com 1 clique e ainda tem editor profissional com camadas. Fale com o Willian no WhatsApp e garanta seu acesso.', 'Stop wasting hours hunting references. The platform created by Willian Ludgero generates 4 ultra-realistic options in ~10 seconds, converts any art into an HD stencil in 1 click, plus a pro layer-based editor. Message Willian on WhatsApp to get your access.'),
+      toolsCta:   t('Falar com Willian no WhatsApp','Talk to Willian on WhatsApp'),
+      toolsLink:  'https://wa.me/5527997962890',
+      toolsFeatures: [
+        { d:'1', icon:'⚡', title: t('4 Artes em ~10 Segundos','4 Artworks in ~10 Seconds'), desc: t('IA própria gera 4 opções ultra-realistas em alta resolução — qualquer estilo: realismo, old school, sketch.','Proprietary AI generates 4 ultra-realistic hi-res options — any style: realism, old school, sketch.') },
+        { d:'2', icon:'🖨️', title: t('Conversor de Stencil HD','HD Stencil Converter'), desc: t('Transforme qualquer arte em stencil perfeito para impressora térmica com 1 clique.','Turn any art into a thermal-printer-ready stencil in 1 click.') },
+        { d:'3', icon:'🎛️', title: t('Studio Pro com Camadas','Layered Studio Pro'), desc: t('Remova fundos, substitua áreas com IA (In-Paint) e gerencie camadas como um profissional.','Remove backgrounds, AI In-Paint areas and manage layers like a pro.') },
+        { d:'4', icon:'💬', title: t('Gerador de Prompts','Prompt Generator'), desc: t('Descreva a ideia ou envie uma referência — a plataforma cuida do resto até o stencil final.','Describe the idea or upload a reference — the platform handles the rest up to the final stencil.') },
+      ],
+      // ── Vídeos da ferramenta ──
+      toolsVideosLabel: t('VEJA COMO FUNCIONA','SEE HOW IT WORKS'),
+      toolsPromoLabel:  t('▶ Vídeo promocional','▶ Promo video'),
+      toolsMoreVideos: ['MpUJFX6fhTQ', 'i5EJs9kRBoQ', '236MaQu1L-Q'].map((id) => ({
+        id, thumb: 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg',
+        play: () => this.setState({ videoId: id }),
+      })),
+
+      toolsPriceTitle: t('Valores sob consulta','Pricing on request'),
+      toolsPriceSub:   t('Entre em contato pelo WhatsApp para conhecer os planos e garantir seu acesso à plataforma.','Get in touch on WhatsApp to learn about the plans and secure your access to the platform.'),
+
+      // ── Carousel ──
+      carTitle:   t('GALERIA DE ARTES','ART GALLERY'),
+      carSub:     t('Designs criados com IA por alunos do curso','AI designs created by course students'),
+      carSlides,
+      carCounter: (carouselIdx + 1) + ' / ' + CAROUSEL_TOTAL,
+      carPrev: () => this.setState(s => ({ carouselIdx: (s.carouselIdx - 1 + CAROUSEL_TOTAL) % CAROUSEL_TOTAL })),
+      carNext: () => this.setState(s => ({ carouselIdx: (s.carouselIdx + 1) % CAROUSEL_TOTAL })),
+
+      // ── For Whom ──
+      forLine1: t('PARA QUEM','WHO IS'),
+      forLine2: t('É ESTE CURSO?','THIS FOR?'),
+      forWhom: [
+        { d:'1', icon:'✏️', title: t('Tatuadores Iniciantes','Beginner Artists'),        desc: t('Crie portfólio profissional rapidamente sem precisar saber desenhar do zero.','Build a professional portfolio fast without knowing how to draw.') },
+        { d:'2', icon:'🏆', title: t('Tatuadores Experientes','Experienced Artists'),    desc: t('Acelere seu processo criativo e saia na frente da concorrência com IA.','Accelerate your creative process and get ahead with AI.') },
+        { d:'3', icon:'🎯', title: t('Artistas & Ilustradores','Artists & Illustrators'), desc: t('Expanda para o mercado de tatuagem usando IA como ferramenta profissional.','Expand into the tattoo market using AI as a professional tool.') },
+      ],
+
+      // ── Testimonials ──
+      depoBadge: t('APROVADO POR PROFISSIONAIS','APPROVED BY PROS'),
+      depoTitle: t('RESULTADOS REAIS','REAL RESULTS'),
+      depoSub:   t('Veja o que os alunos estão criando e dizendo no dia a dia do estúdio:','See what students create and say in the studio every day:'),
+      depoShots: (() => {
+        const base = [
+          { src:'uploads/depo1-min.png', name:'Leandro Tattoo' },
+          { src:'uploads/DEPO2-min.png', name:'Danillo Tattoo' },
+          { src:'uploads/DEPO6-min.png', name:'Maithomas Tattoo' },
+        ];
+        return [...base, ...base]; // duplicado p/ loop infinito perfeito
+      })(),
+
+      // ── Community ──
+      commLine1: t('ENTRE NA','JOIN THE'),
+      commLine2: t('COMUNIDADE VIP','VIP COMMUNITY'),
+      commDesc:  t('Mais de 2.000 tatuadores já estão usando IA para criar artes incríveis, atrair clientes e ganhar mais. Faça parte agora.', 'Over 2,000 tattoo artists are already using AI to create incredible art, attract clients and earn more. Join now.'),
+      commSeeResults: t('Ver Resultados','See Results'),
+      commJoinLabel:  t('Entrar na Comunidade','Join the Community'),
+      commDiscordLink:'https://discord.gg/x39rzHYPn',
+
+      // ── Packs de Imagens ──
+      packsLabel:  t('PACKS DE IMAGENS','IMAGE PACKS'),
+      packsTitle:  t('PACKS PRONTOS','READY PACKS'),
+      packsSub:    t('Milhares de imagens exclusivas em alta resolução, organizadas por categoria e prontas para tatuar — download imediato.','Thousands of exclusive high-res images, organized by category and ready to tattoo — instant download.'),
+      packsBuyCta: t('Comprar Agora','Buy Now'),
+      packs: [
+        {
+          d:'1',
+          img:'uploads/packs/75c7d1bc-6e6b-4973-9d5f-fbfd02ab3f0b.png',
+          name: t('Pack de Imagens Animes 3.0','Anime Image Pack 3.0'),
+          count:'+1000',
+          desc: t('Mais de 1000 imagens exclusivas de animes em alta resolução, prontas para uso.','1000+ exclusive high-res anime images, ready to use.'),
+          price: t('R$ 37','$7'), priceNote: t('acesso vitalício','lifetime access'),
+          buyUrl:'https://pay.kiwify.com.br/S9MKsRC',
+        },
+        {
+          d:'2',
+          img:'uploads/packs/95443895-a847-436e-8c0d-d71762b9cb23.png',
+          name: t('Pack de Fechamentos','Sleeve Closures Pack'),
+          count:'+800',
+          desc: t('Mais de 800 imagens de realismo preto e cinza — desenhos e artes já na pele.','800+ black & grey realism images — designs and art already on skin.'),
+          price: t('R$ 37','$7'), priceNote: t('acesso vitalício','lifetime access'),
+          buyUrl:'https://pay.kiwify.com.br/HFbAB37',
+        },
+        {
+          d:'3',
+          img:'uploads/packs/library.png',
+          name: t('Biblioteca de Imagens','Image Library'),
+          count: t('DIÁRIO','DAILY'),
+          desc: t('Coleção crescente de artes de tatuagem por IA, separadas por tema e atualizadas todos os dias. Downloads ilimitados.','Growing collection of AI tattoo art, organized by theme and updated every day. Unlimited downloads.'),
+          price: t('Mensal','Monthly'), priceNote: t('valores no WhatsApp','pricing on WhatsApp'),
+          buyUrl:'https://wa.me/5527997962890?text=' + encodeURIComponent(t('Quero assinar a Biblioteca de Imagens Tattoo AI Master','I want to subscribe to the Tattoo AI Master Image Library')),
+        },
+      ],
+
+      // ── Pricing ──
+      pricingTitle: t('INVESTIMENTO','INVESTMENT'),
+      pricingSub:   t('Acesso vitalício — pagamento único','Lifetime access — one-time payment'),
+      plan1tag:'STARTER', plan1name:'Tattoo AI Master',
+      plan1price: t('R$197','$40'), plan1note: t('pagamento único','one-time'),
+      plan1features:[
+        t('Curso completo Tattoo AI Master FX','Complete Tattoo AI Master FX Course'),
+        t('Todos os módulos do curso','All course modules'),
+        t('Banco de prompts básico','Basic prompt library'),
+        t('Suporte por e-mail','Email support'),
+        t('Certificado de conclusão','Completion certificate'),
+      ],
+      plan1cta: t('Escolher Starter','Choose Starter'),
+      plan2popular: t('MAIS POPULAR','MOST POPULAR'),
+      plan2tag:'GOLD', plan2name:'Tattoo AI Master GOLD',
+      plan2price: t('R$297','$60'), plan2note: t('pagamento único','one-time'),
+      plan2features:[
+        t('Tudo do plano Starter','Everything in Starter'),
+        t('Guia ChatGPT para Tatuadores','ChatGPT Guide for Tattoo Artists'),
+        t('Pack de 200+ Prompts Premium','200+ Premium Prompts Pack'),
+        t('Grupo VIP no WhatsApp','VIP WhatsApp Group'),
+        t('Suporte prioritário com Willian','Priority support with Willian'),
+        t('Atualizações vitalícias','Lifetime updates'),
+      ],
+      plan2cta: t('Quero o GOLD','Get GOLD'),
+
+      // ── Guarantee ──
+      guarTitle: t('Garantia Total de 7 Dias','7-Day Money-Back Guarantee'),
+      guarText:  t('Se você não ficar 100% satisfeito por qualquer motivo, basta nos contatar em até 7 dias após a compra e devolvemos todo o seu dinheiro. Sem burocracia, sem perguntas.',"If you're not 100% satisfied for any reason, contact us within 7 days and we'll refund every cent. No hassle, no questions."),
+
+      // ── Instructor ──
+      instructorLabel: t('SOBRE O CRIADOR','ABOUT THE CREATOR'),
+      instructorName:  'Willian Ludgero',
+      instructorBio:   t('Willian Ludgero é o criador do primeiro curso de IA para tatuadores do Brasil. Com anos de experiência no mercado tattoo e uma paixão por tecnologia, ele desenvolveu um método único para transformar ideias em artes profissionais com IA — sem precisar saber desenhar.', 'Willian Ludgero is the creator of the first AI course for tattoo artists in Brazil. He developed a unique method to transform ideas into professional art with AI — no drawing skills needed.'),
+
+      // ── Footer ──
+      footerRights: t('© 2026 Tattoo AI Master. Todos os direitos reservados.','© 2026 Tattoo AI Master. All rights reserved.'),
+      footerLinks:  [t('Política de Privacidade','Privacy Policy'), t('Termos de Uso','Terms of Use'), t('Contato','Contact')],
+    };
+  }
+}
+</script>
+</body>
+</html>

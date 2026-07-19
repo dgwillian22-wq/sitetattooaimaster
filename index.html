@@ -423,8 +423,8 @@
     </div>
   </div>
 
-  <!-- Main content -->
-  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 40px 40px;position:relative;z-index:6">
+  <!-- Main content — pointer-events:none pra não bloquear o hover da foto (é um flex:1 full-width); só os links recebem clique -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 40px 40px;position:relative;z-index:6;pointer-events:none">
     <div style="margin-bottom:18px">
       <span style="background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.22);color:var(--c-green);font-size:10px;font-weight:900;letter-spacing:3px;padding:6px 16px;border-radius:100px;text-transform:uppercase">{{ badge }}</span>
     </div>
@@ -434,17 +434,17 @@
     </h1>
     <p style="font-size:clamp(14px,1.8vw,18px);color:rgba(255,255,255,.48);line-height:1.72;max-width:480px;margin-bottom:32px">{{ heroDesc }}</p>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-      <a href="#cursos" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:var(--c-green);color:#000;padding:15px 40px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 28px var(--c-glow);animation:pulseBtn 3s ease infinite;white-space:nowrap">
+      <a href="#cursos" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:var(--c-green);color:#000;padding:15px 40px;border-radius:100px;font-size:15px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 6px 28px var(--c-glow);animation:pulseBtn 3s ease infinite;white-space:nowrap;pointer-events:auto">
         {{ heroCta }}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="#cursos" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.42);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap">
+      <a href="#cursos" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.42);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap;pointer-events:auto">
         {{ heroVerCursos }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
       </a>
     </div>
   </div>
 
-  <!-- Bottom stats bar -->
-  <div style="border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:stretch;flex-wrap:wrap;position:relative;z-index:6">
+  <!-- Bottom stats bar — pointer-events:none pra não bloquear o hover da foto; só o botão recebe clique -->
+  <div style="border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:stretch;flex-wrap:wrap;position:relative;z-index:6;pointer-events:none">
     <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
       <div style="flex:1;min-width:120px;padding:18px 24px;border-right:1px solid rgba(255,255,255,.07)">
         <div style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:900;color:var(--c-green);line-height:1;margin-bottom:3px">{{ s.n }}</div>
@@ -452,7 +452,7 @@
       </div>
     </sc-for>
     <div style="flex:none;display:flex;align-items:center;padding:18px 24px">
-      <a href="#cursos" class="btn-g" style="background:var(--c-green);color:#000;padding:12px 26px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 5px 24px var(--c-glow);white-space:nowrap">{{ heroCta }}</a>
+      <a href="#cursos" class="btn-g" style="background:var(--c-green);color:#000;padding:12px 26px;border-radius:100px;font-size:14px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 5px 24px var(--c-glow);white-space:nowrap;pointer-events:auto">{{ heroCta }}</a>
     </div>
   </div>
 

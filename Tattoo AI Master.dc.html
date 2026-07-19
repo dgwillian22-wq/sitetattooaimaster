@@ -163,24 +163,6 @@
       50%{transform:translate(30px,-38px)} 75%{transform:translate(-24px,-20px)} 100%{transform:translate(0,0)}
     }
 
-    /* Cursor aura — só desktop */
-    #fx-dot, #fx-ring { position:fixed; top:0; left:0; pointer-events:none; z-index:2000; opacity:0; }
-    #fx-dot {
-      width:6px; height:6px; border-radius:50%; background:#39FF14;
-      box-shadow:0 0 10px #39FF14, 0 0 26px rgba(57,255,20,.6);
-      transform:translate(-50%,-50%);
-    }
-    #fx-ring {
-      width:38px; height:38px; border-radius:50%;
-      border:1.5px solid rgba(57,255,20,.55);
-      box-shadow:0 0 18px rgba(57,255,20,.25), inset 0 0 12px rgba(57,255,20,.12);
-      transform:translate(-50%,-50%);
-      transition:width .28s var(--ease-spring), height .28s var(--ease-spring), border-color .28s;
-      mix-blend-mode:screen;
-    }
-    #fx-ring.fx-hot { width:64px; height:64px; border-color:rgba(57,255,20,.95); }
-    @media (pointer:coarse) { #fx-dot, #fx-ring { display:none !important } }
-
     /* Anel conic girando nos cards de curso */
     @property --ang { syntax:'<angle>'; initial-value:0deg; inherits:false; }
     .course-card, .tools-feat { position:relative; }
@@ -227,7 +209,7 @@
     }
 
     @media (prefers-reduced-motion:reduce) {
-      #fx-canvas, #fx-grain, #fx-dot, #fx-ring { display:none !important; }
+      #fx-canvas, #fx-grain { display:none !important; }
       [data-hero] h1, [data-hero] p, [data-hero] .hero-logo-wrap { animation:none !important; }
       .course-card::before { animation:none !important; }
     }
@@ -340,6 +322,8 @@
 
     /* ══ RESPONSIVE ══ */
     @media (max-width:960px) {
+      /* Desliga efeitos decorativos pesados no celular (grão de filme, canvas de partículas) */
+      #fx-grain, #fx-canvas { display:none !important; }
       .hero-logo-wrap { display:none !important; }
       /* Foto do Willian como fundo atmosférico no celular */
       .hero-photo {
@@ -382,8 +366,6 @@
 <!-- ══ FX LAYER ══ -->
 <div id="fx-grain"></div>
 <canvas id="fx-canvas"></canvas>
-<div id="fx-dot"></div>
-<div id="fx-ring"></div>
 
 <!-- ══ MOBILE STICKY CTA ══ -->
 <div id="sticky-cta">
@@ -1070,6 +1052,9 @@ class Component extends DCLogic {
   _initFX() {
     if (this._fxOn || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const FINE = matchMedia('(pointer: fine)').matches;
+    // Celular/touch: pula o canvas de partículas por completo — é só decoração
+    // e um loop de animação full-screen contínuo pesa muito em CPU/bateria de celular.
+    if (!FINE) return;
     const cv = document.getElementById('fx-canvas');
     if (!cv) return;
     this._fxOn = true;
@@ -1226,26 +1211,6 @@ class Component extends DCLogic {
       };
       setTimeout(xrayFlash, 3500);
     }
-
-    // Cursor aura
-    const dot = document.getElementById('fx-dot');
-    const ring = document.getElementById('fx-ring');
-    let rx = 0, ry = 0, seen = false;
-    addEventListener('pointermove', (e) => {
-      if (!seen) { seen = true; rx = e.clientX; ry = e.clientY; dot.style.opacity = ring.style.opacity = 1; }
-      dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
-      const hot = e.target && e.target.closest &&
-        e.target.closest('a,button,.course-card,.gal-item,.car3d-slide,.tools-feat,.btn-g');
-      ring.classList.toggle('fx-hot', !!hot);
-    }, { passive: true });
-    document.addEventListener('mouseleave', () => { dot.style.opacity = ring.style.opacity = 0; });
-    document.addEventListener('mouseenter', () => { if (seen) dot.style.opacity = ring.style.opacity = 1; });
-    const lerpRing = () => {
-      requestAnimationFrame(lerpRing);
-      rx += (mx - rx) * .16; ry += (my - ry) * .16;
-      if (mx > -900) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; }
-    };
-    lerpRing();
 
     // Tilt 3D + glare nos cards (delegado — sobrevive re-render do framework)
     const TILT_SEL = '.course-card,.tools-feat';

@@ -256,6 +256,15 @@
       86% { clip-path:inset(100% 0 0 0); transform:translate(0) }
     }
 
+    /* Raio-X (eu2.png) — revelado num círculo que segue o mouse sobre a foto */
+    .hero-photo { pointer-events:none; }
+    .xray-img {
+      clip-path:circle(0px at 50% 50%);
+      transition:clip-path .09s linear, opacity .12s linear;
+      pointer-events:none;
+      filter:drop-shadow(0 0 14px rgba(57,255,20,.45));
+    }
+
     /* Glitch periódico da foto do Willian — burst curto a cada ciclo */
     .photo-glitch { animation:photoGlitch 7s linear infinite; }
     @keyframes photoGlitch {
@@ -338,6 +347,7 @@
                 mask:radial-gradient(135% 82% at 76% 84%,#000 30%,transparent 72%);
       }
       .hero-photo img { animation:none !important; filter:none !important; }
+      .hero-photo .xray-img { display:none !important; }
       [data-hero] { min-height:auto !important; padding-bottom:0 !important; }
       [data-hero] > div[style*="flex:1"] { padding-bottom:80px !important; }
       .courses-grid { grid-template-columns:1fr !important; }
@@ -406,8 +416,11 @@
   </div>
 
   <!-- Willian photo — anchored right, slightly raised -->
-  <div class="hero-photo hero-logo-wrap" style="position:absolute;right:0;bottom:0;width:min(60vw,760px);z-index:6;pointer-events:none">
-    <img src="uploads/imagens/eu.png" alt="Willian Ludgero" class="photo-glitch" style="width:100%;height:auto;display:block;filter:drop-shadow(-18px 0 48px rgba(0,0,0,.55))">
+  <div class="hero-photo hero-logo-wrap" style="position:absolute;right:0;bottom:0;width:min(60vw,760px);z-index:6">
+    <div style="position:relative">
+      <img src="uploads/imagens/eu.png" alt="Willian Ludgero" class="photo-glitch" style="width:100%;height:auto;display:block;filter:drop-shadow(-18px 0 48px rgba(0,0,0,.55))">
+      <img src="uploads/imagens/eu2.png" alt="" class="xray-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+    </div>
   </div>
 
   <!-- Main content -->
@@ -1152,6 +1165,38 @@ class Component extends DCLogic {
     frame();
 
     if (!FINE) return;
+
+    // Raio-X (eu2.png) — círculo revelador seguindo o mouse + flash aleatório
+    const photoWrap = document.querySelector('.hero-photo > div');
+    const xray = document.querySelector('.xray-img');
+    if (photoWrap && xray) {
+      const R = 120;
+      let hoveringPhoto = false;
+      photoWrap.style.pointerEvents = 'auto';
+      photoWrap.addEventListener('mousemove', (e) => {
+        hoveringPhoto = true;
+        const r = photoWrap.getBoundingClientRect();
+        xray.style.clipPath = `circle(${R}px at ${e.clientX - r.left}px ${e.clientY - r.top}px)`;
+      });
+      photoWrap.addEventListener('mouseleave', () => {
+        hoveringPhoto = false;
+        xray.style.clipPath = 'circle(0px at 50% 50%)';
+      });
+
+      // De vez em quando, o glitch revela o raio-x inteiro por um instante
+      const xrayFlash = () => {
+        if (!hoveringPhoto) {
+          xray.style.transition = 'none';
+          xray.style.clipPath = 'circle(150% at 50% 50%)';
+          setTimeout(() => {
+            xray.style.clipPath = 'circle(0px at 50% 50%)';
+            requestAnimationFrame(() => { xray.style.transition = ''; });
+          }, 120 + Math.random() * 90);
+        }
+        setTimeout(xrayFlash, 5000 + Math.random() * 6000);
+      };
+      setTimeout(xrayFlash, 3500);
+    }
 
     // Cursor aura
     const dot = document.getElementById('fx-dot');

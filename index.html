@@ -100,6 +100,8 @@
     .card-h:hover { transform:translateY(-5px); border-color:var(--c-green) !important; }
     .lnk { transition:color 150ms; }
     .lnk:hover { color:var(--c-green) !important; }
+    .social-btn { transition:transform .2s var(--ease-spring), box-shadow .2s; }
+    .social-btn:hover { transform:translateY(-3px) scale(1.08); box-shadow:0 8px 20px rgba(0,0,0,.25); }
 
     /* ══ COURSE CARDS ══ */
     .course-card { transition:transform var(--dur-base),border-color var(--dur-base),box-shadow var(--dur-base); }
@@ -238,6 +240,8 @@
       color:#fff; -webkit-text-fill-color:#fff; overflow:hidden;
     }
     .glitch::before { left:2px; text-shadow:-2px 0 #39FF14; animation:glitchTop 3.4s steps(2,end) infinite; }
+    /* Variante para títulos escuros sobre fundo claro (ex: seção do instrutor, faixa verde) */
+    .glitch-dark::before, .glitch-dark::after { color:#0a0a0a !important; -webkit-text-fill-color:#0a0a0a !important; }
     .glitch::after  { left:-2px; text-shadow:-2px 0 #ff0059, 2px 2px #00e0ff; animation:glitchBot 2.7s steps(2,end) infinite; }
     @keyframes glitchTop {
       0%,72%,100% { clip-path:inset(0 0 100% 0); transform:translate(0) }
@@ -670,8 +674,8 @@
           <img src="uploads/logo%20tols.png" alt="Tattoo AI Master Tools" style="width:100%;height:auto;display:block">
         </div>
         <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(46px,7vw,92px);font-weight:900;letter-spacing:-3px;line-height:.88;color:#fff;margin-bottom:20px">
-          {{ toolsH1 }}<br>
-          <span style="background:linear-gradient(135deg,#39FF14,#00e055);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">{{ toolsH2 }}</span>
+          <span class="glitch" data-text="{{ toolsH1 }}">{{ toolsH1 }}</span><br>
+          <span class="glitch" data-text="{{ toolsH2 }}" style="background:linear-gradient(135deg,#39FF14,#00e055);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">{{ toolsH2 }}</span>
         </h2>
         <p style="font-size:17px;color:rgba(255,255,255,.52);line-height:1.75;margin-bottom:28px;max-width:520px">{{ toolsDesc }}</p>
         <a href="{{ toolsLink }}" target="_blank" rel="noopener noreferrer" class="btn-g" style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#000;padding:16px 38px;border-radius:100px;font-size:16px;font-weight:900;font-family:'Inter',sans-serif;box-shadow:0 8px 32px rgba(37,211,102,.4)">
@@ -783,7 +787,7 @@
   <div style="max-width:1400px;margin:0 auto;padding:0 32px">
     <div style="margin-bottom:64px" data-reveal>
       <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(52px,9vw,120px);font-weight:900;letter-spacing:-3.5px;line-height:.92">
-        <span style="color:#fff">{{ forLine1 }} </span><span style="color:var(--c-green)">{{ forLine2 }}</span>
+        <span class="glitch" data-text="{{ forLine1 }}" style="color:#fff">{{ forLine1 }} </span><span class="glitch" data-text="{{ forLine2 }}" style="color:var(--c-green)">{{ forLine2 }}</span>
       </h2>
     </div>
     <div class="whom-row" style="display:flex;gap:20px">
@@ -841,7 +845,7 @@
   <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;gap:64px;align-items:center;flex-wrap:wrap;position:relative">
     <div style="flex:1;min-width:280px">
       <div style="font-family:'Outfit',sans-serif;font-size:clamp(48px,8vw,100px);font-weight:900;letter-spacing:-3px;line-height:.9;color:#000">
-        {{ commLine1 }}<br><span style="color:rgba(0,0,0,.65)">{{ commLine2 }}</span>
+        <span class="glitch glitch-dark" data-text="{{ commLine1 }}">{{ commLine1 }}</span><br><span class="glitch glitch-dark" data-text="{{ commLine2 }}" style="color:rgba(0,0,0,.65)">{{ commLine2 }}</span>
       </div>
     </div>
     <div style="flex:none;max-width:440px">
@@ -904,7 +908,7 @@
   <div style="max-width:1400px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:60px;flex-wrap:wrap" data-reveal>
     <div style="flex:none"><div style="font-size:100px;line-height:1">🛡️</div></div>
     <div style="flex:1;min-width:280px">
-      <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:900;letter-spacing:-2.5px;line-height:.95;color:#fff;margin-bottom:18px">{{ guarTitle }}</h2>
+      <h2 class="glitch" data-text="{{ guarTitle }}" style="font-family:'Outfit',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:900;letter-spacing:-2.5px;line-height:.95;color:#fff;margin-bottom:18px">{{ guarTitle }}</h2>
       <p style="font-size:17px;color:rgba(255,255,255,.5);line-height:1.7;max-width:580px">{{ guarText }}</p>
     </div>
     <div style="flex:none">
@@ -922,7 +926,7 @@
     <div style="display:inline-block;background:#0a0a0a;border-radius:100px;padding:5px 14px;margin-bottom:18px">
       <span style="font-size:10px;font-weight:800;color:var(--c-green);letter-spacing:2px;text-transform:uppercase">{{ instructorLabel }}</span>
     </div>
-    <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;color:#0a0a0a">{{ instructorName }}</h2>
+    <h2 class="glitch glitch-dark" data-text="{{ instructorName }}" style="font-family:'Outfit',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-1.5px;margin-bottom:18px;color:#0a0a0a">{{ instructorName }}</h2>
     <p style="font-size:17px;color:rgba(0,0,0,.55);line-height:1.75;max-width:660px;margin:0 auto">{{ instructorBio }}</p>
   </div>
 </section>
@@ -932,15 +936,26 @@
   <div style="position:absolute;top:-10%;right:-5%;width:40vw;height:40vw;background:rgba(0,0,0,.05);border-radius:50%;pointer-events:none"></div>
   <div style="max-width:1400px;margin:0 auto;padding:0 32px;position:relative">
     <div style="overflow:hidden;margin-bottom:48px">
-      <div style="font-family:'Outfit',sans-serif;font-size:clamp(60px,12vw,160px);font-weight:900;letter-spacing:-5px;line-height:.85;color:rgba(0,0,0,.15);white-space:nowrap;user-select:none">TATTOO AI MASTER</div>
+      <div class="glitch glitch-dark" data-text="TATTOO AI MASTER" style="font-family:'Outfit',sans-serif;font-size:clamp(60px,12vw,160px);font-weight:900;letter-spacing:-5px;line-height:.85;color:rgba(0,0,0,.15);white-space:nowrap;user-select:none">TATTOO AI MASTER</div>
     </div>
     <div class="footer-inner" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;border-top:1px solid rgba(0,0,0,.15);padding-top:28px">
       <img src="uploads/logo%20tols.png" alt="Tattoo AI Master" style="height:44px;width:auto;object-fit:contain;filter:brightness(0)">
       <p style="font-size:13px;color:rgba(0,0,0,.5);font-weight:500">{{ footerRights }}</p>
-      <div style="display:flex;gap:24px">
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
         <sc-for list="{{ footerLinks }}" as="fl" hint-placeholder-count="3">
           <a href="#" class="lnk" style="font-size:13px;color:rgba(0,0,0,.55);font-weight:600;transition:color .2s">{{ fl }}</a>
         </sc-for>
+        <div style="display:flex;gap:10px">
+          <a href="https://www.instagram.com/ludtattoo_" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram Ludtattoo" style="width:38px;height:38px;border-radius:50%;background:#000;color:var(--c-green);display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.instagram.com/tattooaimaster" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram Tattoo AI Master" style="width:38px;height:38px;border-radius:50%;background:#000;color:var(--c-green);display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://br.pinterest.com/ludtattoo/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Pinterest Ludtattoo" style="width:38px;height:38px;border-radius:50%;background:#000;color:var(--c-green);display:flex;align-items:center;justify-content:center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.237 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.183-.78 1.182-4.97 1.182-4.97s-.301-.602-.301-1.492c0-1.398.812-2.442 1.823-2.442.86 0 1.274.645 1.274 1.418 0 .864-.55 2.156-.834 3.352-.237 1.002.502 1.82 1.489 1.82 1.787 0 3.16-1.885 3.16-4.605 0-2.407-1.73-4.09-4.198-4.09-2.86 0-4.538 2.145-4.538 4.362 0 .864.333 1.792.749 2.297a.301.301 0 01.069.289c-.076.317-.245.995-.278 1.134-.043.183-.143.222-.33.134-1.23-.573-1.999-2.372-1.999-3.818 0-3.109 2.259-5.966 6.512-5.966 3.418 0 6.076 2.436 6.076 5.69 0 3.394-2.14 6.126-5.113 6.126-.999 0-1.938-.519-2.259-1.132l-.614 2.342c-.222.856-.824 1.928-1.227 2.581.924.286 1.903.44 2.919.44 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </div>

@@ -148,15 +148,17 @@
     /* Canvas global de partículas — blend screen some em fundos claros */
     #fx-canvas {
       position:fixed; inset:0; z-index:500;
-      pointer-events:none; mix-blend-mode:screen;
+      pointer-events:none;
     }
 
-    /* Grão de filme */
+    /* Pausa animações fora da tela (classe aplicada via IntersectionObserver) */
+    .anim-off, .anim-off::before, .anim-off::after { animation-play-state:paused !important; }
+
+    /* Grão de filme (estático — animar overlay em tela cheia pesava muito) */
     #fx-grain {
       position:fixed; inset:-100px; z-index:460; pointer-events:none;
-      opacity:.045; mix-blend-mode:overlay;
+      opacity:.04;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
-      animation:grainShift 1.2s steps(4) infinite;
     }
     @keyframes grainShift {
       0%{transform:translate(0,0)} 25%{transform:translate(-42px,28px)}
@@ -581,7 +583,7 @@
           <div class="modal-gallery" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
             <sc-for list="{{ mc.gallery }}" as="g" hint-placeholder-count="6">
               <div onClick="{{ g.open }}" class="gal-item" style="position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;cursor:pointer;background:#151515;border:1px solid rgba(255,255,255,.06)">
-                <img src="{{ g.src }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+                <img src="{{ g.src }}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block">
                 <div class="gal-zoom" style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4M11 8v6M8 11h6"/></svg>
                 </div>
@@ -600,7 +602,7 @@
             <sc-for list="{{ mc.videos }}" as="v" hint-placeholder-count="2">
               <sc-if value="{{ v.id }}" hint-placeholder-val="{{ true }}">
                 <div onClick="{{ v.play }}" class="vid-item" style="position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;background:#151515;border:1px solid rgba(255,255,255,.08)">
-                  <img src="https://img.youtube.com/vi/{{ v.id }}/hqdefault.jpg" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+                  <img src="https://img.youtube.com/vi/{{ v.id }}/hqdefault.jpg" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block">
                   <div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center">
                     <div style="width:60px;height:60px;border-radius:50%;background:{{ mc.accent }};display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.5)">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="#000"><path d="M8 5v14l11-7z"/></svg>
@@ -641,7 +643,7 @@
   <sc-if value="{{ videoId }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ bgVideo }}" style="position:fixed;inset:0;z-index:1200;background:rgba(2,2,2,.94);display:flex;align-items:center;justify-content:center;padding:4vh 20px">
       <div style="width:min(960px,94vw);aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.9);background:#000">
-        <iframe src="https://www.youtube.com/embed/{{ videoId }}?autoplay=1&rel=0" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/{{ videoId }}?autoplay=1&rel=0{{ videoQuery }}" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
       </div>
       <button onClick="{{ closeVideo }}" style="position:fixed;top:24px;right:24px;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
@@ -686,16 +688,16 @@
         <!-- Short promocional (toca sozinho) -->
         <div style="flex:none;width:min(250px,80vw)">
           <div style="position:relative;aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#0a0a0a;border:1px solid rgba(57,255,20,.28);box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 1px rgba(57,255,20,.18)">
-            <iframe src="https://www.youtube.com/embed/sLLfiw4YFNg?autoplay=1&mute=1&loop=1&playlist=sLLfiw4YFNg&controls=1&rel=0&playsinline=1&modestbranding=1" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+            <iframe loading="lazy" decoding="async" src="https://www.youtube.com/embed/sLLfiw4YFNg?autoplay=1&mute=1&loop=1&playlist=sLLfiw4YFNg&controls=1&rel=0&playsinline=1&modestbranding=1" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
           </div>
           <p style="text-align:center;font-size:12px;color:rgba(255,255,255,.3);margin-top:12px;letter-spacing:.5px">{{ toolsPromoLabel }}</p>
         </div>
         <!-- 3 vídeos "como funciona" pequenos, landscape, um abaixo do outro -->
         <div style="flex:none;width:min(210px,80vw);display:flex;flex-direction:column;justify-content:center;gap:11px">
           <span style="font-size:9px;font-weight:900;letter-spacing:2px;color:var(--c-green);text-transform:uppercase;margin-bottom:2px">{{ toolsVideosLabel }}</span>
-          <sc-for list="{{ toolsMoreVideos }}" as="tv" hint-placeholder-count="3">
+          <sc-for list="{{ toolsMoreVideos }}" as="tv" hint-placeholder-count="4">
             <div onClick="{{ tv.play }}" class="vid-item" style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:pointer;background:#0a0a0a;border:1px solid rgba(255,255,255,.08)">
-              <img src="{{ tv.thumb }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+              <img src="{{ tv.thumb }}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block">
               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);border:1px solid rgba(57,255,20,.4);display:flex;align-items:center;justify-content:center">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--c-green)"><path d="M8 5v14l11-7z"/></svg>
               </div>
@@ -756,7 +758,7 @@
                     -webkit-box-reflect:{{ cs.reflect }};
                     box-shadow:{{ cs.shadow }};border:1px solid {{ cs.border }}">
           <div style="aspect-ratio:3/4;background:#0a0a0a">
-            <img src="{{ cs.src }}" alt="{{ cs.alt }}" loading="lazy"
+            <img src="{{ cs.src }}" alt="{{ cs.alt }}" loading="lazy" decoding="async"
                  style="width:100%;height:100%;object-fit:cover;display:block">
           </div>
         </div>
@@ -817,7 +819,7 @@
     <div class="depo-track">
       <sc-for list="{{ depoShots }}" as="ds" hint-placeholder-count="6">
         <figure class="depo-card">
-          <img src="{{ ds.src }}" alt="{{ ds.name }}" loading="lazy">
+          <img src="{{ ds.src }}" alt="{{ ds.name }}" loading="lazy" decoding="async">
           <figcaption>
             <span class="depo-stars">★★★★★</span>
             <span class="depo-name">{{ ds.name }}</span>
@@ -874,7 +876,7 @@
       <sc-for list="{{ packs }}" as="pk" hint-placeholder-count="2">
         <div class="pack-card" data-reveal data-reveal-d="{{ pk.d }}" style="position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(57,255,20,.15);background:#0a0a0a">
           <div style="position:relative;overflow:hidden">
-            <img src="{{ pk.img }}" alt="{{ pk.name }}" class="pack-img" loading="lazy" style="width:100%;height:auto;display:block">
+            <img src="{{ pk.img }}" alt="{{ pk.name }}" class="pack-img" loading="lazy" decoding="async" style="width:100%;height:auto;display:block">
             <div style="position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);border:1px solid rgba(57,255,20,.3);color:var(--c-green);font-size:11px;font-weight:900;letter-spacing:1px;padding:7px 13px;border-radius:100px">{{ pk.count }}</div>
           </div>
           <div style="padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px">
@@ -962,30 +964,13 @@
 const CAROUSEL_TOTAL = 70;
 
 class Component extends DCLogic {
-  state = { lang: 'pt', expandedId: null, zoomImg: null, videoId: null, carouselIdx: 0, moreVideos: false };
+  state = { lang: 'pt', expandedId: null, zoomImg: null, videoId: null, videoStart: 0, carouselIdx: 0, moreVideos: false };
 
   componentDidMount() {
-    // Frosted navbar
-    const nav = document.querySelector('[data-nav]');
-    if (nav) {
-      window.addEventListener('scroll', () => {
-        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
-      }, { passive: true });
-    }
-
     // ESC key
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this.setState({ expandedId: null, zoomImg: null, videoId: null });
     });
-
-    // Scroll progress bar
-    const bar = document.getElementById('scroll-bar');
-    if (bar) {
-      window.addEventListener('scroll', () => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        if (max > 0) bar.style.width = ((window.scrollY / max) * 100) + '%';
-      }, { passive: true });
-    }
 
     // Mobile sticky CTA — aparece quando o hero sai da viewport
     const stickyCta = document.getElementById('sticky-cta');
@@ -1009,19 +994,49 @@ class Component extends DCLogic {
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach(el => revealIO.observe(el));
 
-    // Parallax
-    const parEls = document.querySelectorAll('[data-par-speed]');
+    // Scroll (navbar, barra de progresso e parallax) — um único handler, 1x por frame,
+    // lendo o layout antes de escrever e só mexendo nos elementos visíveis.
+    const nav = document.querySelector('[data-nav]');
+    const bar = document.getElementById('scroll-bar');
+    const parEls = Array.from(document.querySelectorAll('[data-par-speed]'));
+    const parVisible = new Set();
     if (parEls.length) {
-      window.addEventListener('scroll', () => {
+      const parIO = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { en.isIntersecting ? parVisible.add(en.target) : parVisible.delete(en.target); });
+        this._onScroll && this._onScroll();
+      }, { rootMargin: '150px 0px' });
+      parEls.forEach((el) => parIO.observe(el));
+    }
+    let scrollQueued = false;
+    const doScroll = () => {
+      scrollQueued = false;
+      const y = window.scrollY;
+      if (nav) nav.classList.toggle('nav-scrolled', y > 40);
+      if (bar) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        if (max > 0) bar.style.width = ((y / max) * 100) + '%';
+      }
+      if (parVisible.size) {
         const vh = window.innerHeight;
-        parEls.forEach(el => {
+        const writes = [];
+        parVisible.forEach((el) => {
           const speed = parseFloat(el.getAttribute('data-par-speed')) || 0.1;
           const rect = el.getBoundingClientRect();
-          const fromCenter = (rect.top + rect.height / 2) - vh / 2;
-          el.style.transform = `translateY(${fromCenter * speed * -0.6}px)`;
+          writes.push([el, ((rect.top + rect.height / 2) - vh / 2) * speed * -0.6]);
         });
-      }, { passive: true });
-    }
+        writes.forEach(([el, dy]) => { el.style.transform = `translateY(${dy}px)`; });
+      }
+    };
+    this._onScroll = () => { if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(doScroll); } };
+    window.addEventListener('scroll', this._onScroll, { passive: true });
+    doScroll();
+
+    // Pausa animações CSS infinitas (glitch, ticker, glow…) quando saem da tela
+    const animEls = document.querySelectorAll('.glitch, .photo-glitch, .depo-track, .depo-scan, [style*="animation"]');
+    const animIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => en.target.classList.toggle('anim-off', !en.isIntersecting));
+    }, { rootMargin: '100px 0px' });
+    animEls.forEach((el) => animIO.observe(el));
 
     // Carousel autoplay
     this._startCarousel();
@@ -1029,6 +1044,7 @@ class Component extends DCLogic {
     // Carousel touch swipe
     const car = document.querySelector('[data-carousel]');
     if (car) {
+      new IntersectionObserver(([en]) => { this._carVisible = en.isIntersecting; }).observe(car);
       let tx = 0;
       car.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
       car.addEventListener('touchend', e => {
@@ -1060,7 +1076,7 @@ class Component extends DCLogic {
     this._fxOn = true;
 
     const cx = cv.getContext('2d');
-    const DPR = Math.min(devicePixelRatio || 1, 1.5);
+    const DPR = 1;
     let W = 0, H = 0;
     const resize = () => {
       W = innerWidth; H = innerHeight;
@@ -1088,7 +1104,7 @@ class Component extends DCLogic {
     const glowW = makeGlow(64, 190, 255, 170);
 
     // Brasas ambiente
-    const embers = Array.from({ length: FINE ? 55 : 24 }, () => ({
+    const embers = Array.from({ length: FINE ? 30 : 24 }, () => ({
       x: Math.random() * 2000, y: Math.random() * 1200,
       r: 0.8 + Math.random() * 2.4,
       vy: 0.12 + Math.random() * 0.35,
@@ -1282,6 +1298,7 @@ class Component extends DCLogic {
   _startCarousel() {
     clearInterval(this._carTimer);
     this._carTimer = setInterval(() => {
+      if (document.hidden || this._carVisible === false) return;
       this.setState(s => ({ carouselIdx: (s.carouselIdx + 1) % CAROUSEL_TOTAL }));
     }, 4500);
   }
@@ -1290,7 +1307,7 @@ class Component extends DCLogic {
 
   renderVals() {
     const t = (pt, en) => this.t(pt, en);
-    const { lang, expandedId, zoomImg, videoId, carouselIdx, moreVideos } = this.state;
+    const { lang, expandedId, zoomImg, videoId, videoStart, carouselIdx, moreVideos } = this.state;
 
     // ── Gallery + video builders ──
     const gallery = (dir, count, ext) => Array.from({ length: count || 6 }, (_, i) => {
@@ -1305,7 +1322,7 @@ class Component extends DCLogic {
     };
     const videosFor = (key) => {
       const ids = VIDEO_IDS[key] || [];
-      const list = ids.map((id) => ({ id, play: () => this.setState({ videoId: id }) }));
+      const list = ids.map((id) => ({ id, play: () => this.setState({ videoId: id, videoStart: 0 }) }));
       while (list.length < 2) list.push({ empty: true });
       return list;
     };
@@ -1464,6 +1481,7 @@ class Component extends DCLogic {
       courseCards, mc,
       modalOpen: !!expandedId,
       zoomImg, videoId,
+      videoQuery: videoStart ? '&start=' + videoStart : '',
       closeCourse: () => this.setState({ expandedId: null, zoomImg: null, videoId: null }),
       closeZoom:   () => this.setState({ zoomImg: null }),
       closeVideo:  () => this.setState({ videoId: null }),
@@ -1496,9 +1514,12 @@ class Component extends DCLogic {
       // ── Vídeos da ferramenta ──
       toolsVideosLabel: t('VEJA COMO FUNCIONA','SEE HOW IT WORKS'),
       toolsPromoLabel:  t('▶ Vídeo promocional','▶ Promo video'),
-      toolsMoreVideos: ['MpUJFX6fhTQ', 'i5EJs9kRBoQ', '236MaQu1L-Q'].map((id) => ({
+      toolsMoreVideos: [
+        { id: 'B49leJ8_FN4', start: 292 },
+        { id: 'MpUJFX6fhTQ' }, { id: 'i5EJs9kRBoQ' }, { id: '236MaQu1L-Q' },
+      ].map(({ id, start }) => ({
         id, thumb: 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg',
-        play: () => this.setState({ videoId: id }),
+        play: () => this.setState({ videoId: id, videoStart: start || 0 }),
       })),
 
       toolsPriceTitle: t('Valores sob consulta','Pricing on request'),

@@ -695,7 +695,7 @@
         <!-- 3 vídeos "como funciona" pequenos, landscape, um abaixo do outro -->
         <div style="flex:none;width:min(210px,80vw);display:flex;flex-direction:column;justify-content:center;gap:11px">
           <span style="font-size:9px;font-weight:900;letter-spacing:2px;color:var(--c-green);text-transform:uppercase;margin-bottom:2px">{{ toolsVideosLabel }}</span>
-          <sc-for list="{{ toolsMoreVideos }}" as="tv" hint-placeholder-count="4">
+          <sc-for list="{{ toolsMoreVideos }}" as="tv" hint-placeholder-count="3">
             <div onClick="{{ tv.play }}" class="vid-item" style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:pointer;background:#0a0a0a;border:1px solid rgba(255,255,255,.08)">
               <img src="{{ tv.thumb }}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block">
               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);border:1px solid rgba(57,255,20,.4);display:flex;align-items:center;justify-content:center">
@@ -705,6 +705,19 @@
           </sc-for>
         </div>
       </div>
+    </div>
+
+    <!-- Vídeo em destaque (abre no player em tela cheia, a partir de 4:52) -->
+    <div data-reveal style="max-width:880px;margin:0 auto 56px;text-align:center">
+      <span style="display:inline-block;font-size:10px;font-weight:900;letter-spacing:3px;color:var(--c-green);text-transform:uppercase;margin-bottom:14px">{{ toolsFeaturedLabel }}</span>
+      <div onClick="{{ toolsFeaturedPlay }}" class="vid-item" role="button" aria-label="{{ toolsFeaturedLabel }}" style="position:relative;aspect-ratio:16/9;border-radius:22px;overflow:hidden;cursor:pointer;background:#0a0a0a;border:1px solid rgba(57,255,20,.28);box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 1px rgba(57,255,20,.18)">
+        <img src="https://img.youtube.com/vi/B49leJ8_FN4/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/B49leJ8_FN4/hqdefault.jpg'" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 55%)"></div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;background:rgba(0,0,0,.6);border:2px solid rgba(57,255,20,.6);box-shadow:0 0 36px rgba(57,255,20,.35);display:flex;align-items:center;justify-content:center">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="var(--c-green)"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+      <p style="margin-top:14px;font-size:14px;color:rgba(255,255,255,.45)">{{ toolsFeaturedSub }}</p>
     </div>
 
     <!-- Feature grid -->
@@ -1514,13 +1527,13 @@ class Component extends DCLogic {
       // ── Vídeos da ferramenta ──
       toolsVideosLabel: t('VEJA COMO FUNCIONA','SEE HOW IT WORKS'),
       toolsPromoLabel:  t('▶ Vídeo promocional','▶ Promo video'),
-      toolsMoreVideos: [
-        { id: 'B49leJ8_FN4', start: 292 },
-        { id: 'MpUJFX6fhTQ' }, { id: 'i5EJs9kRBoQ' }, { id: '236MaQu1L-Q' },
-      ].map(({ id, start }) => ({
+      toolsMoreVideos: ['MpUJFX6fhTQ', 'i5EJs9kRBoQ', '236MaQu1L-Q'].map((id) => ({
         id, thumb: 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg',
-        play: () => this.setState({ videoId: id, videoStart: start || 0 }),
+        play: () => this.setState({ videoId: id, videoStart: 0 }),
       })),
+      toolsFeaturedLabel: t('VEJA A PLATAFORMA EM AÇÃO','SEE THE PLATFORM IN ACTION'),
+      toolsFeaturedSub:   t('Clique para assistir ao Tattoo AI Master Tools funcionando','Click to watch Tattoo AI Master Tools at work'),
+      toolsFeaturedPlay:  () => this.setState({ videoId: 'B49leJ8_FN4', videoStart: 292 }),
 
       toolsPriceTitle: t('Valores sob consulta','Pricing on request'),
       toolsPriceSub:   t('Entre em contato pelo WhatsApp para conhecer os planos e garantir seu acesso à plataforma.','Get in touch on WhatsApp to learn about the plans and secure your access to the platform.'),

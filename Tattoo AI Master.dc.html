@@ -469,7 +469,7 @@
       <p style="margin-top:12px;font-size:16px;color:rgba(255,255,255,.35)">{{ coursesSub }}</p>
     </div>
 
-    <div class="courses-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+    <div class="courses-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
       <sc-for list="{{ courseCards }}" as="c" hint-placeholder-count="3">
         <div onClick="{{ c.open }}" class="course-card" data-reveal data-reveal-d="{{ c.revealD }}" style="cursor:pointer;display:flex;flex-direction:column;border-radius:22px;overflow:hidden">
           <div style="position:relative;overflow:hidden">
@@ -1302,7 +1302,6 @@ class Component extends DCLogic {
     const VIDEO_IDS = {
       mj:   [],
       grok: [],
-      fx:   [],
     };
     const videosFor = (key) => {
       const ids = VIDEO_IDS[key] || [];
@@ -1315,7 +1314,6 @@ class Component extends DCLogic {
     const BUY_URLS = {
       mj:   t('https://pay.kiwify.com.br/zCbYoOm', 'https://pay.hotmart.com/V94945135R'),
       grok: t('https://pay.kiwify.com.br/uxuJIhc', 'https://pay.hotmart.com/N105059158L?bid=1784383500923'),
-      fx:   t('https://pay.kiwify.com.br/aUGbqAt', 'https://go.hotmart.com/K101971028J'),
     };
 
     // ── Link do Tattoo AI Master Tools — substitua pelo link real ──
@@ -1383,39 +1381,10 @@ class Component extends DCLogic {
         price: t('R$ 299','$59'), priceNote: t('pagamento único','one-time'),
         gallery: gallery('grok', 7, 'jpg'), videos: videosFor('grok'), buyUrl: BUY_URLS.grok,
       },
-      fx: {
-        accent:'#39FF14', glow:'rgba(57,255,20,.4)', soft:'rgba(57,255,20,.1)',
-        softer:'rgba(57,255,20,.05)', border:'rgba(57,255,20,.2)',
-        label:'FX', cover:'uploads/fx.png',
-        name:'Tattoo AI Master FX',
-        sub: t('Criação ilimitada de tatuagens com IA 100% gratuita.','Unlimited tattoo creation with 100% free AI.'),
-        fullSub: t('IA Própria · 100% Gratuita · Sem Mensalidades','Proprietary AI · 100% Free · No Monthly Fees'),
-        features: [
-          t('Arte IA Ilimitada','Unlimited AI Artwork'),
-          t('App Exclusivo FX','Exclusive FX App'),
-          t('Guia de Prompts com 200+ Páginas','200+ Page Prompt Guide'),
-          t('Prompts Profissionais para Tatuagem','Professional Tattoo Prompts'),
-          t('Curso Completo em Vídeo','Complete Video Course'),
-        ],
-        reqIcon:'✅', req: t('IA Própria · Sem Mensalidades · Gerações Ilimitadas','Proprietary AI · No Monthly Fees · Unlimited Generations'),
-        bonuses:[
-          { icon:'🎥', text: t('Curso Completo em Vídeo','Complete Video Course') },
-        ],
-        mods:[
-          { n:'01', title:'Tattoo AI Master FX App', desc: t('O app exclusivo — acesso, navegação e primeiros designs.','The exclusive app — access, navigation and first designs.') },
-          { n:'02', title: t('IA Própria Sem Limites','Proprietary AI Without Limits'), desc: t('Tecnologia exclusiva com gerações ilimitadas e 100% gratuita.','Exclusive technology with unlimited generations, 100% free.') },
-          { n:'03', title: t('200+ Prompts Prontos','200+ Ready Prompts'), desc: t('Biblioteca completa de prompts testados por estilo.','Complete library of tested prompts by style.') },
-          { n:'04', title: t('Todos os Estilos','All Styles'), desc: t('Blackwork, realismo, aquarela, geométrico, japonês.','Blackwork, realism, watercolor, geometric, Japanese.') },
-          { n:'05', title: t('Workflow Completo','Full Workflow'), desc: t('Do briefing do cliente ao design final em IA.','From client briefing to final AI design.') },
-          { n:'06', title: t('Portfólio com IA','AI Portfolio'), desc: t('Use suas artes de IA para atrair mais clientes.','Use your AI art to attract more clients.') },
-        ],
-        price: t('R$ 89','$39'), priceNote: t('pagamento único','one-time'),
-        gallery: gallery('fx', 6, 'jpg'), videos: videosFor('fx'), buyUrl: BUY_URLS.fx,
-      },
     };
 
-    const order = ['mj', 'grok', 'fx'];
-    const revealDs = ['1', '2', '3'];
+    const order = ['mj', 'grok'];
+    const revealDs = ['1', '2'];
     const courseCards = order.map((key, idx) => {
       const c = COURSES[key];
       return {
@@ -1614,7 +1583,7 @@ class Component extends DCLogic {
       plan1tag:'STARTER', plan1name:'Tattoo AI Master',
       plan1price: t('R$197','$40'), plan1note: t('pagamento único','one-time'),
       plan1features:[
-        t('Curso completo Tattoo AI Master FX','Complete Tattoo AI Master FX Course'),
+        t('Curso completo Tattoo AI Master','Complete Tattoo AI Master Course'),
         t('Todos os módulos do curso','All course modules'),
         t('Banco de prompts básico','Basic prompt library'),
         t('Suporte por e-mail','Email support'),
